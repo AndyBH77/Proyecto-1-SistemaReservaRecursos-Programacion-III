@@ -16,15 +16,17 @@ import java.awt.Insets;
 
 /**
  * Ventana de inicio de sesion. Es una vista "tonta": solo arma los
- * componentes graficos. Toda la logica (validar credenciales, abrir
- * la ventana principal, etc.) vive en LoginController.
+ * componentes graficos. Toda la logica vive en LoginController.
+ *
+ * NOTA: el registro de nuevos funcionarios ya NO se hace desde aqui.
+ * Ahora solo el Administrador puede crear funcionarios, desde la pestaña
+ * "Funcionarios" de la ventana principal (ver FuncionarioView).
  */
 public class LoginView extends JFrame {
 
     private final JTextField txtId = new JTextField(15);
     private final JPasswordField txtClave = new JPasswordField(15);
     private final JButton btnIngresar = new JButton("Ingresar");
-    private final JButton btnRegistrarse = new JButton("Registrarse");
     private final JButton btnOlvideClave = new JButton("Olvidé mi clave");
     private final JButton btnSalir = new JButton("Salir");
 
@@ -36,8 +38,8 @@ public class LoginView extends JFrame {
     private void construirInterfaz() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(Constantes.TAMANO_VENTANA_LOGIN);
-        setResizable(false); // Requerimiento: ventanas de tamano fijo
-        setLocationRelativeTo(null); // Centrar en pantalla
+        setResizable(false);
+        setLocationRelativeTo(null);
 
         JPanel panelPrincipal = new JPanel(new GridBagLayout());
         panelPrincipal.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
@@ -58,10 +60,8 @@ public class LoginView extends JFrame {
         c.gridx = 1;
         panelPrincipal.add(txtClave, c);
 
-        JPanel panelBotones = new JPanel(new GridLayout(2, 2, 5, 5));
+        JPanel panelBotones = new JPanel(new GridLayout(2, 1, 5, 5));
         panelBotones.add(btnIngresar);
-        panelBotones.add(btnSalir);
-        panelBotones.add(btnRegistrarse);
         panelBotones.add(btnOlvideClave);
 
         c.gridx = 0;
@@ -69,10 +69,12 @@ public class LoginView extends JFrame {
         c.gridwidth = 2;
         panelPrincipal.add(panelBotones, c);
 
+        c.gridy = 3;
+        panelPrincipal.add(btnSalir, c);
+
         add(panelPrincipal);
     }
 
-    // Getters para que el controlador pueda leer/enlazar eventos
     public JTextField getTxtId() {
         return txtId;
     }
@@ -83,10 +85,6 @@ public class LoginView extends JFrame {
 
     public JButton getBtnIngresar() {
         return btnIngresar;
-    }
-
-    public JButton getBtnRegistrarse() {
-        return btnRegistrarse;
     }
 
     public JButton getBtnOlvideClave() {

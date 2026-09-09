@@ -40,6 +40,23 @@ public class ReservaService {
     }
 
     /**
+     * Devuelve TODAS las reservas del sistema (de cualquier funcionario).
+     * La usa el Administrador, que debe poder ver el listado completo,
+     * a diferencia de un Funcionario normal que solo ve las suyas
+     * (ver obtenerReservasDe).
+     */
+    public List<Reserva> obtenerTodasLasReservas() {
+        return reservaDAO.listarTodas();
+    }
+
+    /**
+     * Busca una reserva puntual por su id, sin importar de que funcionario sea.
+     */
+    public Optional<Reserva> buscarPorId(String idReserva) {
+        return reservaDAO.buscarPorId(idReserva);
+    }
+
+    /**
      * Resultado de intentar crear/modificar una reserva: indica si tuvo
      * exito y, si no, cuales categorias no tenian disponibilidad.
      *

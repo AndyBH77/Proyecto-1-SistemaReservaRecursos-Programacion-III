@@ -11,20 +11,12 @@ import jakarta.mail.MessagingException;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Logica de negocio para inicio de sesion, registro de nuevos funcionarios
- * y cambio/recuperacion de clave.
- */
 public class AutenticacionService {
 
     private final AdministradorDAO administradorDAO = new AdministradorDAO();
     private final FuncionarioDAO funcionarioDAO = new FuncionarioDAO();
     private final EmailService emailService = new EmailService();
 
-    /**
-     * Intenta iniciar sesion. Devuelve el Usuario si las credenciales son
-     * correctas, o Optional.empty() si no.
-     */
     public Optional<Usuario> login(String id, String clave) {
         Optional<Administrador> admin = administradorDAO.buscarPorId(id);
         if (admin.isPresent() && admin.get().getClave().equals(clave)) {
@@ -39,9 +31,6 @@ public class AutenticacionService {
         return Optional.empty();
     }
 
-    /**
-     * Cambia la clave de un usuario ya autenticado, validando la clave actual.
-     */
     public void cambiarClave(Usuario usuario, String claveActual, String claveNueva) throws Exception {
         if (!usuario.getClave().equals(claveActual)) {
             throw new Exception("La clave actual no es correcta.");
@@ -62,22 +51,21 @@ public class AutenticacionService {
     /**
      * Registra un nuevo funcionario en el sistema: genera una clave aleatoria,
      * la envia al correo indicado y guarda el nuevo usuario.
-     *
-     * @throws Exception si el id ya existe, el correo es invalido, o el envio de correo falla.
+     * Solo el Administrador tiene acceso a la pantalla que llama este metodo.
      */
     public String registrarNuevoFuncionario(String id, String nombre, String telefono, String correo) throws Exception {
-        validarDatosRegistro(id, nombre, telefono, correo);
+        validarDatosFuncionario(nombre, telefono, correo);
 
+        if (id == null || id.isBlank()) {
+            throw new Exception("El id es obligatorio.");
+        }
         if (funcionarioDAO.existeId(id) || administradorDAO.buscarPorId(id).isPresent()) {
             throw new Exception("Ya existe un usuario registrado con el id \"" + id + "\".");
         }
 
         String claveGenerada = PasswordGenerator.generar(10);
-
         Funcionario nuevoFuncionario = new Funcionario(id, claveGenerada, correo, nombre, telefono);
 
-        // Primero se intenta enviar el correo; si falla, no se guarda el usuario
-        // (para no dejar cuentas "huerfanas" sin que el funcionario conozca su clave).
         try {
             emailService.enviarClaveGenerada(correo, nombre, claveGenerada);
         } catch (MessagingException e) {
@@ -86,14 +74,25 @@ public class AutenticacionService {
         }
 
         funcionarioDAO.guardar(nuevoFuncionario);
-
         return claveGenerada;
     }
 
     /**
-     * Genera una nueva clave aleatoria para un id existente y la envia al
-     * correo que quedo registrado para ese usuario ("olvide mi clave").
+     * Modifica los datos (nombre, telefono, correo) de un funcionario ya
+     * existente. No cambia su id ni su clave (para eso esta cambiarClave).
      */
+    public void modificarDatosFuncionario(String id, String nombre, String telefono, String correo) throws Exception {
+        Funcionario funcionario = funcionarioDAO.buscarPorId(id)
+                .orElseThrow(() -> new Exception("El funcionario \"" + id + "\" no existe."));
+
+        validarDatosFuncionario(nombre, telefono, correo);
+
+        funcionario.setNombre(nombre);
+        funcionario.setTelefono(telefono);
+        funcionario.setEmail(correo);
+        funcionarioDAO.guardar(funcionario);
+    }
+
     public void recuperarClave(String id) throws Exception {
         Optional<Funcionario> funcionarioOpt = funcionarioDAO.buscarPorId(id);
         Optional<Administrador> adminOpt = administradorDAO.buscarPorId(id);
@@ -117,10 +116,7 @@ public class AutenticacionService {
         }
     }
 
-    private void validarDatosRegistro(String id, String nombre, String telefono, String correo) throws Exception {
-        if (id == null || id.isBlank()) {
-            throw new Exception("El id es obligatorio.");
-        }
+    private void validarDatosFuncionario(String nombre, String telefono, String correo) throws Exception {
         if (nombre == null || nombre.isBlank()) {
             throw new Exception("El nombre es obligatorio.");
         }

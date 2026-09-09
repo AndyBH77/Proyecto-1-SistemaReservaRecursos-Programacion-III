@@ -4,7 +4,6 @@ import cr.ac.una.eif206.modelo.Usuario;
 import cr.ac.una.eif206.negocio.AutenticacionService;
 import cr.ac.una.eif206.presentacion.vista.LoginView;
 import cr.ac.una.eif206.presentacion.vista.MainView;
-import cr.ac.una.eif206.presentacion.vista.RegistroView;
 
 import javax.swing.JOptionPane;
 import java.util.Optional;
@@ -12,6 +11,10 @@ import java.util.Optional;
 /**
  * Controlador de la ventana de Login. Conecta los eventos de LoginView
  * con la logica de negocio de AutenticacionService.
+ *
+ * NOTA: ya no existe un registro publico de usuarios desde aqui. Ahora solo
+ * el Administrador puede crear funcionarios, desde la pestaña "Funcionarios"
+ * de la ventana principal (ver FuncionarioController).
  */
 public class LoginController {
 
@@ -26,7 +29,6 @@ public class LoginController {
     private void registrarEventos() {
         vista.getBtnIngresar().addActionListener(e -> intentarIngresar());
         vista.getBtnSalir().addActionListener(e -> System.exit(0));
-        vista.getBtnRegistrarse().addActionListener(e -> abrirRegistro());
         vista.getBtnOlvideClave().addActionListener(e -> recuperarClave());
     }
 
@@ -46,17 +48,11 @@ public class LoginController {
             MainView mainView = new MainView(usuario.get());
             new MainController(mainView, usuario.get());
             mainView.setVisible(true);
-            vista.dispose(); // se cierra la ventana de login
+            vista.dispose();
         } else {
             JOptionPane.showMessageDialog(vista, "El id o la clave no son correctos.",
                     "Error de ingreso", JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-    private void abrirRegistro() {
-        RegistroView registroView = new RegistroView(vista);
-        new RegistroController(registroView, autenticacionService);
-        registroView.setVisible(true);
     }
 
     private void recuperarClave() {
@@ -65,7 +61,7 @@ public class LoginController {
                 "Recuperar clave", JOptionPane.QUESTION_MESSAGE);
 
         if (id == null || id.isBlank()) {
-            return; // el usuario cancelo el dialogo
+            return;
         }
 
         try {

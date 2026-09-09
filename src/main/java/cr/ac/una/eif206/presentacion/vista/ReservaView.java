@@ -12,6 +12,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerDateModel;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -19,11 +20,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.Date;
 
-/**
- * Panel de la pestaña "Reservas". Contiene el formulario para crear/editar
- * una reserva (incluyendo el botón de extracción con IA) y la tabla
- * "Mis reservas" con las reservas del funcionario que inició sesión.
- */
 public class ReservaView extends JPanel {
 
     private final JTextField txtFrase = new JTextField();
@@ -44,11 +40,13 @@ public class ReservaView extends JPanel {
     private final JButton btnLimpiar = new JButton("Limpiar");
     private final JButton btnImprimir = new JButton("Imprimir");
 
+    private final TitledBorder bordeTabla = BorderFactory.createTitledBorder("Mis reservas");
+
     private final DefaultTableModel modeloTablaReservas = new DefaultTableModel(
-            new Object[]{"Id", "Actividad", "Fecha", "Horario", "Recursos", "Estado"}, 0) {
+            new Object[]{"Id", "Funcionario", "Actividad", "Fecha", "Horario", "Recursos", "Estado"}, 0) {
         @Override
         public boolean isCellEditable(int fila, int columna) {
-            return false; // La tabla es solo de lectura
+            return false;
         }
     };
     private final JTable tablaReservas = new JTable(modeloTablaReservas);
@@ -86,7 +84,6 @@ public class ReservaView extends JPanel {
         c.insets = new Insets(4, 4, 4, 4);
         c.fill = GridBagConstraints.HORIZONTAL;
 
-        // Fila 0: Frase + boton IA
         c.gridx = 0;
         c.gridy = 0;
         panel.add(new JLabel("Frase:"), c);
@@ -99,7 +96,6 @@ public class ReservaView extends JPanel {
         c.weightx = 0;
         panel.add(btnExtraerIA, c);
 
-        // Fila 1: Actividad
         c.gridx = 0;
         c.gridy = 1;
         panel.add(new JLabel("Actividad:"), c);
@@ -107,7 +103,6 @@ public class ReservaView extends JPanel {
         c.gridwidth = 3;
         panel.add(txtActividad, c);
 
-        // Fila 2: Fecha / Hora inicio
         c.gridx = 0;
         c.gridy = 2;
         c.gridwidth = 1;
@@ -119,14 +114,12 @@ public class ReservaView extends JPanel {
         c.gridx = 3;
         panel.add(spinnerHoraInicio, c);
 
-        // Fila 3: Hora fin
         c.gridx = 2;
         c.gridy = 3;
         panel.add(new JLabel("Hora fin:"), c);
         c.gridx = 3;
         panel.add(spinnerHoraFin, c);
 
-        // Fila 4-5: Lista de categorias
         c.gridx = 0;
         c.gridy = 4;
         panel.add(new JLabel("Categorías:"), c);
@@ -138,7 +131,6 @@ public class ReservaView extends JPanel {
         panel.add(new JScrollPane(listaCategorias), c);
         c.gridheight = 1;
 
-        // Fila 6: Botones de accion
         JPanel panelBotones = new JPanel();
         panelBotones.add(btnReservar);
         panelBotones.add(btnModificar);
@@ -155,7 +147,7 @@ public class ReservaView extends JPanel {
 
     private JPanel construirPanelTabla() {
         JPanel panel = new JPanel(new BorderLayout(5, 5));
-        panel.setBorder(BorderFactory.createTitledBorder("Mis reservas"));
+        panel.setBorder(bordeTabla);
 
         panel.add(new JScrollPane(tablaReservas), BorderLayout.CENTER);
 
@@ -166,65 +158,24 @@ public class ReservaView extends JPanel {
         return panel;
     }
 
-    // ---- Getters usados por el controlador ----
-
-    public JTextField getTxtFrase() {
-        return txtFrase;
+    public void setTituloListado(String titulo) {
+        bordeTabla.setTitle(titulo);
+        repaint();
     }
 
-    public JButton getBtnExtraerIA() {
-        return btnExtraerIA;
-    }
-
-    public JTextField getTxtActividad() {
-        return txtActividad;
-    }
-
-    public JSpinner getSpinnerFecha() {
-        return spinnerFecha;
-    }
-
-    public JSpinner getSpinnerHoraInicio() {
-        return spinnerHoraInicio;
-    }
-
-    public JSpinner getSpinnerHoraFin() {
-        return spinnerHoraFin;
-    }
-
-    public DefaultListModel<String> getModeloListaCategorias() {
-        return modeloListaCategorias;
-    }
-
-    public JList<String> getListaCategorias() {
-        return listaCategorias;
-    }
-
-    public JButton getBtnReservar() {
-        return btnReservar;
-    }
-
-    public JButton getBtnModificar() {
-        return btnModificar;
-    }
-
-    public JButton getBtnCancelarReserva() {
-        return btnCancelarReserva;
-    }
-
-    public JButton getBtnLimpiar() {
-        return btnLimpiar;
-    }
-
-    public JButton getBtnImprimir() {
-        return btnImprimir;
-    }
-
-    public DefaultTableModel getModeloTablaReservas() {
-        return modeloTablaReservas;
-    }
-
-    public JTable getTablaReservas() {
-        return tablaReservas;
-    }
+    public JTextField getTxtFrase() { return txtFrase; }
+    public JButton getBtnExtraerIA() { return btnExtraerIA; }
+    public JTextField getTxtActividad() { return txtActividad; }
+    public JSpinner getSpinnerFecha() { return spinnerFecha; }
+    public JSpinner getSpinnerHoraInicio() { return spinnerHoraInicio; }
+    public JSpinner getSpinnerHoraFin() { return spinnerHoraFin; }
+    public DefaultListModel<String> getModeloListaCategorias() { return modeloListaCategorias; }
+    public JList<String> getListaCategorias() { return listaCategorias; }
+    public JButton getBtnReservar() { return btnReservar; }
+    public JButton getBtnModificar() { return btnModificar; }
+    public JButton getBtnCancelarReserva() { return btnCancelarReserva; }
+    public JButton getBtnLimpiar() { return btnLimpiar; }
+    public JButton getBtnImprimir() { return btnImprimir; }
+    public DefaultTableModel getModeloTablaReservas() { return modeloTablaReservas; }
+    public JTable getTablaReservas() { return tablaReservas; }
 }

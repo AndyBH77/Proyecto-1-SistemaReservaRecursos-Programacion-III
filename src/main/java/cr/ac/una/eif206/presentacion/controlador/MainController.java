@@ -7,8 +7,9 @@ import cr.ac.una.eif206.presentacion.vista.MainView;
 
 /**
  * Controlador general de la ventana principal: maneja el boton de cambiar
- * clave y el de cerrar sesion. La pestaña de Reservas tiene su propio
- * controlador (ReservaController), que se activa automaticamente aqui.
+ * clave y el de cerrar sesion. Ademas activa el controlador de la pestaña
+ * de Reservas y, si el usuario es Administrador, el de la pestaña de
+ * Funcionarios.
  */
 public class MainController {
 
@@ -20,8 +21,11 @@ public class MainController {
         this.usuarioActual = usuarioActual;
         registrarEventos();
 
-        // Se activa el controlador de la pestaña de Reservas
         new ReservaController(vista.getReservaView(), usuarioActual);
+
+        if (vista.getFuncionarioView() != null) {
+            new FuncionarioController(vista.getFuncionarioView());
+        }
     }
 
     private void registrarEventos() {

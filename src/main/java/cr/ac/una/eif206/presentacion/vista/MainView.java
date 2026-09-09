@@ -12,14 +12,18 @@ import java.awt.BorderLayout;
 
 /**
  * Ventana principal del sistema, con pestañas de navegacion hacia cada
- * funcionalidad (similar al ejemplo de pantallas del enunciado). El
- * contenido real de "Reservas" lo arma esta persona; el resto de pestañas
- * son placeholders que reemplazaran los demas integrantes del equipo.
+ * funcionalidad (similar al ejemplo de pantallas del enunciado).
  */
 public class MainView extends JFrame {
 
     private final JTabbedPane tabbedPane = new JTabbedPane();
     private final ReservaView reservaView;
+
+    // Solo se crea si el usuario logueado es Administrador (ver mas abajo).
+    // Queda null para un Funcionario normal, por eso el getter avisa que
+    // puede devolver null.
+    private FuncionarioView funcionarioView;
+
     private final JButton btnCambiarClave = new JButton("Cambiar clave");
     private final JButton btnCerrarSesion = new JButton("Cerrar sesión");
 
@@ -28,20 +32,19 @@ public class MainView extends JFrame {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(Constantes.TAMANO_VENTANA_PRINCIPAL);
-        setResizable(false); // Requerimiento: tamaño fijo
+        setResizable(false);
         setLocationRelativeTo(null);
 
         reservaView = new ReservaView();
 
-        // Pestañas visibles para cualquier rol
         tabbedPane.addTab("Reservas", reservaView);
         tabbedPane.addTab("Calendarización", new PanelEnConstruccion("Calendarización de recursos"));
         tabbedPane.addTab("Actividades", new PanelEnConstruccion("Programación de actividades"));
         tabbedPane.addTab("Estadísticas", new PanelEnConstruccion("Estadísticas"));
 
-        // Pestañas exclusivas del administrador
         if (usuarioActual.getRol() == RolUsuario.ADMINISTRADOR) {
-            tabbedPane.addTab("Funcionarios", new PanelEnConstruccion("Lista de funcionarios"));
+            funcionarioView = new FuncionarioView();
+            tabbedPane.addTab("Funcionarios", funcionarioView);
             tabbedPane.addTab("Categorías", new PanelEnConstruccion("Lista de categorías de recurso"));
             tabbedPane.addTab("Recursos", new PanelEnConstruccion("Lista de recursos"));
         }
@@ -56,6 +59,10 @@ public class MainView extends JFrame {
 
     public ReservaView getReservaView() {
         return reservaView;
+    }
+
+    public FuncionarioView getFuncionarioView() {
+        return funcionarioView;
     }
 
     public JButton getBtnCambiarClave() {

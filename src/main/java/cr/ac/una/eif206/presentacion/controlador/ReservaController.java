@@ -2,6 +2,7 @@ package cr.ac.una.eif206.presentacion.controlador;
 
 import cr.ac.una.eif206.modelo.CategoriaRecurso;
 import cr.ac.una.eif206.modelo.Reserva;
+import cr.ac.una.eif206.modelo.RolUsuario;
 import cr.ac.una.eif206.modelo.Usuario;
 import cr.ac.una.eif206.negocio.ReservaService;
 import cr.ac.una.eif206.negocio.llm.DatosReservaExtraidos;
@@ -18,23 +19,23 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Controlador de la pestaña de Reservas: conecta ReservaView con
- * ReservaService (CRUD de reservas) y LlmExtractorService (boton de IA).
- */
 public class ReservaController {
 
     private final ReservaView vista;
     private final Usuario usuarioActual;
+    private final boolean esAdministrador;
     private final ReservaService reservaService = new ReservaService();
     private final LlmExtractorService llmExtractorService = new LlmExtractorService();
 
     private List<CategoriaRecurso> categoriasDisponibles;
-    private String idReservaSeleccionada; // usada para "Modificar" y "Cancelar"
+    private String idReservaSeleccionada;
 
     public ReservaController(ReservaView vista, Usuario usuarioActual) {
         this.vista = vista;
         this.usuarioActual = usuarioActual;
+        this.esAdministrador = usuarioActual.getRol() == RolUsuario.ADMINISTRADOR;
+
+        vista.setTituloListado(esAdministrador ? "Todas las reservas" : "Mis reservas");
 
         cargarCategorias();
         cargarTablaReservas();
@@ -64,15 +65,21 @@ public class ReservaController {
         }
     }
 
+    private List<Reserva> obtenerReservasParaMostrar() {
+        return esAdministrador
+                ? reservaService.obtenerTodasLasReservas()
+                : reservaService.obtenerReservasDe(usuarioActual.getId());
+    }
+
     private void cargarTablaReservas() {
         vista.getModeloTablaReservas().setRowCount(0);
-        List<Reserva> reservas = reservaService.obtenerReservasDe(usuarioActual.getId());
+        List<Reserva> reservas = obtenerReservasParaMostrar();
 
         for (Reserva r : reservas) {
             String horario = r.getHoraInicio() + " - " + r.getHoraFin();
             String recursos = String.join(", ", r.getIdsRecursosAsignados());
             vista.getModeloTablaReservas().addRow(new Object[]{
-                    r.getId(), r.getActividad(), r.getFecha(), horario, recursos, r.getEstado()
+                    r.getId(), r.getIdFuncionario(), r.getActividad(), r.getFecha(), horario, recursos, r.getEstado()
             });
         }
     }
@@ -126,7 +133,6 @@ public class ReservaController {
                     .atZone(ZoneId.systemDefault()).toInstant()));
         }
 
-        // Se marcan en la lista las categorias que la IA identifico
         vista.getListaCategorias().clearSelection();
         for (int i = 0; i < categoriasDisponibles.size(); i++) {
             String descripcion = categoriasDisponibles.get(i).getDescripcion();
@@ -234,10 +240,7 @@ public class ReservaController {
 
         idReservaSeleccionada = (String) vista.getModeloTablaReservas().getValueAt(filaSeleccionada, 0);
 
-        // Se busca la reserva completa para poder llenar el formulario con sus datos
-        reservaService.obtenerReservasDe(usuarioActual.getId()).stream()
-                .filter(r -> r.getId().equals(idReservaSeleccionada))
-                .findFirst()
+        reservaService.buscarPorId(idReservaSeleccionada)
                 .ifPresent(this::mostrarReservaEnFormulario);
     }
 
@@ -260,7 +263,7 @@ public class ReservaController {
 
     private void imprimirReservas() {
         try {
-            List<Reserva> reservas = reservaService.obtenerReservasDe(usuarioActual.getId());
+            List<Reserva> reservas = obtenerReservasParaMostrar();
             String rutaArchivo = ReportePdfGenerator.generarReporteReservas(usuarioActual.getId(), reservas);
             JOptionPane.showMessageDialog(vista, "Reporte generado en:\n" + rutaArchivo,
                     "Reporte PDF generado", JOptionPane.INFORMATION_MESSAGE);
@@ -270,10 +273,6 @@ public class ReservaController {
         }
     }
 
-    /**
-     * Lee y convierte los datos actuales del formulario a los tipos que
-     * necesita ReservaService (LocalDate, LocalTime, lista de ids).
-     */
     private DatosFormulario leerFormulario() {
         String actividad = vista.getTxtActividad().getText().trim();
 
@@ -296,9 +295,6 @@ public class ReservaController {
         return new DatosFormulario(actividad, fecha, horaInicio, horaFin, idsCategorias);
     }
 
-    /**
-     * Clase interna simple para agrupar los datos leidos del formulario.
-     */
     private static class DatosFormulario {
         final String actividad;
         final LocalDate fecha;

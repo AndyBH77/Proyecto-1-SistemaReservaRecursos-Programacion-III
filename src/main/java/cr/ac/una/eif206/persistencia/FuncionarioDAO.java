@@ -26,13 +26,30 @@ public class FuncionarioDAO {
                 .findFirst();
     }
 
+    /**
+     Busca funcionarios cuyo id o nombre contengan el texto dado
+     (sin importar mayusculas/minusculas). Se usa en la pantalla de
+     Funcionarios para el campo de busqueda.
+     */
+    public List<Funcionario> buscarPorTexto(String texto) {
+        String textoBusqueda = texto.toLowerCase();
+        List<Funcionario> resultado = new ArrayList<>();
+        for (Funcionario f : listarTodos()) {
+            boolean coincideId = f.getId().toLowerCase().contains(textoBusqueda);
+            boolean coincideNombre = f.getNombre().toLowerCase().contains(textoBusqueda);
+            if (coincideId || coincideNombre) {
+                resultado.add(f);
+            }
+        }
+        return resultado;
+    }
+
     public boolean existeId(String id) {
         return buscarPorId(id).isPresent();
     }
 
     public void guardar(Funcionario funcionario) {
         List<Funcionario> lista = listarTodos();
-        // Si ya existe, se reemplaza (esto cubre tanto "crear" como "actualizar")
         lista.removeIf(f -> f.getId().equalsIgnoreCase(funcionario.getId()));
         lista.add(funcionario);
         guardarTodos(lista);
