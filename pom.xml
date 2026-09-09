@@ -27,6 +27,39 @@
             <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- JAXB: permite convertir objetos Java a XML y viceversa -->
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>4.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>4.0.5</version>
+        </dependency>
+
+        <!-- Jakarta Mail: para enviar correos reales por Gmail (SMTP) -->
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>jakarta.mail</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+
+        <!-- OpenPDF: para generar los reportes en PDF -->
+        <dependency>
+            <groupId>com.github.librepdf</groupId>
+            <artifactId>openpdf</artifactId>
+            <version>1.3.39</version>
+        </dependency>
+
+        <!-- org.json: para leer/escribir JSON al hablar con la API de la IA -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20240303</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -41,14 +74,14 @@
                 </configuration>
             </plugin>
 
-            <!-- Surefire: ejecuta tests de UNIDAD (patrón por defecto: *Test.java) -->
+            <!-- Surefire: ejecuta tests de UNIDAD (patron por defecto: *Test.java) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire.version}</version>
             </plugin>
 
-            <!-- Failsafe: ejecuta tests de INTEGRACIÓN (patrón por defecto: *IT.java) -->
+            <!-- Failsafe: ejecuta tests de INTEGRACION (patron por defecto: *IT.java) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
