@@ -84,20 +84,18 @@ public class ReportePdfGenerator {
 
     /**
      * Genera un archivo PDF utilizando los datos contenidos en una JTable.
-     *
+     * <p>
      * Este método se puede reutilizar para imprimir:
      * - Calendarización de recursos.
      * - Programación de actividades.
      * - Estadísticas.
      *
      * @param tituloReporte título que aparecerá en la parte superior del PDF.
-     * @param tablaOrigen JTable de donde se copiarán los encabezados y los datos.
+     * @param tablaOrigen   JTable de donde se copiarán los encabezados y los datos.
      * @return ruta absoluta donde se guardó el archivo PDF.
      * @throws Exception si ocurre un error al crear el archivo.
      */
-    public static String generarReporteTabla(
-            String tituloReporte,
-            JTable tablaOrigen
+    public static String generarReporteTabla(String tituloReporte, JTable tablaOrigen
     ) throws Exception {
         //Crear la carpeta "reportes" si todavía no existe.
         File carpeta = new File(CARPETA_REPORTES);
@@ -108,13 +106,10 @@ public class ReportePdfGenerator {
         if (tablaOrigen == null) { //Si se recibe null, no se puede generar el reporte porque no existiría una tabla de donde obtener la información
             throw new IllegalArgumentException("La tabla utilizada para generar el reporte no puede ser null.");
         }
-        String nombreBase = tituloReporte //Convertir el título en un texto que pueda utilizarse nombre de archivo.
-                .toLowerCase()
-                .replaceAll("[^a-z0-9]+", "_");
+        String nombreBase = tituloReporte.toLowerCase().replaceAll("[^a-z0-9]+", "_"); //Convertir el título en un texto que pueda utilizarse nombre de archivo.
         String nombreArchivo = nombreBase + "_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".pdf"; // La fecha y hora evitan que un reporte nuevo sobrescriba otro reporte generado anteriormente.
-        String rutaCompleta = CARPETA_REPORTES //Construir la ruta completa donde se guardará el archivo.
-                + File.separator
-                + nombreArchivo;
+        String rutaCompleta = CARPETA_REPORTES + File.separator + nombreArchivo;//Construir la ruta completa donde se guardará el archivo.
+
         Document documento = new Document(com.lowagie.text.PageSize.A4.rotate());//Crear el documento PDF. Se utiliza A4 horizontal porque las tablas de Calendarización y Actividades pueden tener muchas columnas.
         PdfWriter.getInstance(documento, new FileOutputStream(rutaCompleta));//Conectar el documento con el archivo físico que se creará.
         documento.open();
@@ -160,5 +155,56 @@ public class ReportePdfGenerator {
         documento.add(tablaPdf);
         documento.close();
         return new File(rutaCompleta).getAbsolutePath(); //Devolver la ruta absoluta del archivo creado. El controlador usa esta ruta para mostrarle al usuario dónde quedó guardado el reporte.
+    }
+
+    public static String generarReporteEstadisticas(String titulo, String desde, String hasta, JTable tabla) throws Exception {
+        //Crear la carpeta "reportes" si todavía no existe.
+        File carpeta = new File(CARPETA_REPORTES);
+        if (!carpeta.exists()) {
+            carpeta.mkdirs();
+        }
+        String nombreArchivo = "estadisticas_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".pdf";
+        String rutaCompleta = CARPETA_REPORTES + File.separator + nombreArchivo;
+
+        Document documento = new Document();
+        PdfWriter.getInstance(documento, new FileOutputStream(rutaCompleta));
+        documento.open();
+        Font fuenteTitulo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18); // Crea y agrega el título.
+        Paragraph parrafoTitulo = new Paragraph(titulo, fuenteTitulo);
+        parrafoTitulo.setAlignment(Element.ALIGN_CENTER);
+        documento.add(parrafoTitulo);
+        documento.add(new Paragraph(" "));
+        documento.add(new Paragraph("Período consultado: " + desde + " hasta " + hasta)); // Agrega el período consultado.
+        documento.add(new Paragraph(" "));
+        int cantidadColumnas = tabla.getColumnCount();  // Obtiene la cantidad de columnas de la JTable.
+        if (cantidadColumnas == 0) { // Si la tabla no tiene columnas, muestra un mensaje.
+            documento.add(new Paragraph("No existen datos para mostrar."));
+            documento.close();
+            return new File(rutaCompleta).getAbsolutePath();
+        }
+        PdfPTable tablaPdf = new PdfPTable(cantidadColumnas); // Crea la tabla que será colocada en el PDF.
+        tablaPdf.setWidthPercentage(100);
+        for (int columna = 0; columna < cantidadColumnas; columna++) { // Crea directamente los encabezados.
+            String nombreColumna = tabla.getColumnName(columna);
+            Font fuenteEncabezado = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11);
+            Paragraph textoEncabezado = new Paragraph(nombreColumna, fuenteEncabezado);
+            PdfPCell celdaEncabezado = new PdfPCell(textoEncabezado);
+            celdaEncabezado.setBackgroundColor(new Color(220, 220, 220));
+            tablaPdf.addCell(celdaEncabezado);
+        }
+        for (int fila = 0; fila < tabla.getRowCount(); fila++) { // Copia los datos de la JTable.
+            for (int columna = 0; columna < cantidadColumnas; columna++) {
+                Object valor = tabla.getValueAt(fila, columna
+                );
+                if (valor == null) {
+                    tablaPdf.addCell("");
+                } else {
+                    tablaPdf.addCell(valor.toString());
+                }
+            }
+        }
+        documento.add(tablaPdf);
+        documento.close();
+        return new File(rutaCompleta).getAbsolutePath(); // Devuelve la ruta absoluta del archivo.
     }
 }
