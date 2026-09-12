@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<administradores>
+    <administrador>
+        <id>admin</id>
+        <clave>admin1234</clave>
+        <rol>ADMINISTRADOR</rol>
+        <email>admin@correo.com</email>
+    </administrador>
+</administradores>
