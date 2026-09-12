@@ -275,20 +275,33 @@ public class Estilos {
     }
 
     /**
-     * Colorea la pestaña seleccionada y deja blancas
-     * las pestañas que no están seleccionadas.
+     * Coloca un JLabel personalizado dentro de cada pestaña.
+     * Así los colores funcionan correctamente en Windows.
      */
     private static void actualizarPestanas(JTabbedPane pestanas) {
         int seleccionada = pestanas.getSelectedIndex();
         for (int indice = 0; indice < pestanas.getTabCount(); indice++) {
-            if (indice == seleccionada) {
-                pestanas.setBackgroundAt(indice, VERDE_PRINCIPAL);
-                pestanas.setForegroundAt(indice, BLANCO);
+            JLabel etiqueta;
+            Component componenteActual = pestanas.getTabComponentAt(indice);
+            if (componenteActual instanceof JLabel) { //Reutiliza la etiqueta si ya fue creada.
+                etiqueta = (JLabel) componenteActual;
             } else {
-                pestanas.setBackgroundAt(indice, BLANCO);
-                pestanas.setForegroundAt(indice, VERDE_OSCURO);
+                etiqueta = new JLabel(pestanas.getTitleAt(indice));
+                etiqueta.setOpaque(true);
+                etiqueta.setFont(new Font("Segoe UI", Font.BOLD, 13));
+                etiqueta.setHorizontalAlignment(SwingConstants.CENTER);
+                etiqueta.setBorder(BorderFactory.createEmptyBorder(9, 13, 9, 13));
+                pestanas.setTabComponentAt(indice,etiqueta);
+            }
+            if (indice == seleccionada) { //Pestaña seleccionada.
+                etiqueta.setBackground(VERDE_PRINCIPAL);
+                etiqueta.setForeground(BLANCO);
+            } else { //Pestañas no seleccionadas.
+                etiqueta.setBackground(BLANCO);
+                etiqueta.setForeground(VERDE_OSCURO);
             }
         }
+        pestanas.repaint();
     }
 
     /**

@@ -72,7 +72,14 @@ public class MainView extends JFrame {
         add(barraSuperior, BorderLayout.NORTH);
         add(tabbedPane, BorderLayout.CENTER);
         Estilos.aplicarEstiloGeneral(this, tabbedPane); //Se aplica el estilo después de crear y agregar todos los componentes.
-        barraSuperior.setBackground(Estilos.VERDE_OSCURO); //Se vuelven a colocar los colores de la barra porque la personalización recursiva modifica paneles.
+        //Se vuelven a colocar los colores de la barra porque la personalización recursiva modifica paneles.
+        barraSuperior.setBackground(Estilos.VERDE_OSCURO);
+        lblTitulo.setForeground(Color.WHITE);
+        panelSesion.setOpaque(false);
+        btnCambiarClave.setBackground(Color.WHITE);
+        btnCambiarClave.setForeground(Estilos.VERDE_OSCURO);
+        btnCerrarSesion.setBackground(Color.WHITE);
+        btnCerrarSesion.setForeground(Estilos.VERDE_OSCURO);
         panelSesion.setOpaque(false);
     }
 
