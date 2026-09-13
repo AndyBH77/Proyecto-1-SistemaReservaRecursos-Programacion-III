@@ -152,7 +152,7 @@ public class Estilos {
             colorFondo = AMARILLO_IA;
             colorTexto = TEXTO_OSCURO;
             colorBorde = new Color(200, 135, 30);
-        } else if (textoMinuscula.contains("cancelar") || textoMinuscula.contains("eliminar") || textoMinuscula.contains("borrar")) { //Botones de cancelación o eliminación.
+        } else if (textoMinuscula.contains("cancelar") || textoMinuscula.contains("eliminar") || textoMinuscula.contains("borrar") || textoMinuscula.contains("salir")) { //Botones de cancelación o eliminación.
             colorFondo = ROJO_CANCELAR;
             colorTexto = BLANCO;
             colorBorde = new Color(180, 65, 62);
@@ -160,7 +160,7 @@ public class Estilos {
             colorFondo = AZUL_PETROLEO;
             colorTexto = BLANCO;
             colorBorde = new Color(18, 110, 142);
-        } else if (textoMinuscula.contains("reservar") || textoMinuscula.contains("guardar") || textoMinuscula.contains("registrar") || textoMinuscula.contains("cargar")) {  //Botones principales.
+        } else if (textoMinuscula.contains("reservar") || textoMinuscula.contains("guardar") || textoMinuscula.contains("registrar") || textoMinuscula.contains("cargar") || textoMinuscula.contains("ingresar")) {  //Botones principales.
             colorFondo = VERDE_PRINCIPAL;
             colorTexto = BLANCO;
             colorBorde = VERDE_OSCURO;
