@@ -1,2 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<reservas/>
+<reservas>
+    <reserva>
+        <id>RES-000001</id>
+        <idFuncionario>admin</idFuncionario>
+        <actividad>confi</actividad>
+        <fecha>2026-09-13</fecha>
+        <horaInicio>18:19</horaInicio>
+        <horaFin>23:19</horaFin>
+        <estado>ACTIVA</estado>
+        <idCategoria>CAT-000003</idCategoria>
+        <idRecurso>452784</idRecurso>
+    </reserva>
+</reservas>
