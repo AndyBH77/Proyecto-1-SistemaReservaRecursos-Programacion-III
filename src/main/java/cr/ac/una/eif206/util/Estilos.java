@@ -175,30 +175,73 @@ public class Estilos {
         boton.revalidate(); //Obliga a Swing a actualizar visualmente el botón.
         boton.repaint();
     }
+
+    /**
+     * Dibuja los encabezados de las tablas.
+     *
+     * Se utiliza este renderer porque Windows puede ignorar
+     * el fondo configurado directamente en JTableHeader.
+     */
+    private static class RenderizadorEncabezado extends DefaultTableCellRenderer {
+
+        public RenderizadorEncabezado() {
+            setOpaque(true);
+            setBackground(VERDE_OSCURO);
+            setForeground(BLANCO);
+            setFont(new Font("Segoe UI", Font.BOLD, 13));
+            setHorizontalAlignment(SwingConstants.CENTER);
+            setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, new Color(70, 140, 135)), BorderFactory.createEmptyBorder(6, 6, 6, 6)));
+        }
+        @Override
+        public Component getTableCellRendererComponent(JTable tabla, Object valor, boolean seleccionado, boolean tieneFoco, int fila, int columna) {
+            JLabel etiqueta = (JLabel) super.getTableCellRendererComponent(tabla, valor, seleccionado, tieneFoco, fila, columna); //Obtiene la etiqueta que representa el encabezado.
+
+            //Coloca el nombre de la columna.
+            etiqueta.setText(valor == null ? "" : valor.toString());
+            etiqueta.setOpaque(true);
+            etiqueta.setBackground(VERDE_OSCURO);
+            etiqueta.setForeground(BLANCO);
+            etiqueta.setFont(new Font("Segoe UI", Font.BOLD, 13));
+            etiqueta.setHorizontalAlignment(SwingConstants.CENTER);
+            return etiqueta;
+        }
+    }
+
     /**
      * Configura los colores y tamaños de una JTable.
+     * Aplica el diseño verde a una JTable.
      */
     public static void aplicarEstiloTabla(JTable tabla) {
+
         tabla.setBackground(BLANCO);
         tabla.setForeground(TEXTO_OSCURO);
         tabla.setSelectionBackground(new Color(181, 232, 218));
         tabla.setSelectionForeground(TEXTO_OSCURO);
-        tabla.setGridColor(new Color(210, 232, 226));
+        tabla.setGridColor(new Color(170, 215, 205));
         tabla.setRowHeight(28);
         tabla.setShowHorizontalLines(true);
         tabla.setShowVerticalLines(true);
         tabla.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+
+        //Obtiene el encabezado de la tabla.
         JTableHeader encabezado = tabla.getTableHeader();
-        if (encabezado != null) {
+        if (encabezado != null) { //Esto obliga a Windows a mostrar el fondo verde y las letras blancas.
+            encabezado.setDefaultRenderer(new RenderizadorEncabezado());
             encabezado.setBackground(VERDE_OSCURO);
             encabezado.setForeground(BLANCO);
             encabezado.setFont(new Font("Segoe UI", Font.BOLD, 13));
             encabezado.setReorderingAllowed(false);
-            encabezado.setOpaque(true);
+            encabezado.setPreferredSize(new java.awt.Dimension(encabezado.getPreferredSize().width, 36)); //Aumenta un poco la altura del encabezado.
         }
-        TableCellRenderer rendererActual = tabla.getDefaultRenderer(Object.class); //Solo instala las filas alternadas cuando la tabla todavía utiliza el renderer predeterminado. Esto evita reemplazar los colores especiales de Calendarización y Actividades.
-        if (rendererActual instanceof UIResource) {tabla.setDefaultRenderer(Object.class, new RenderizadorFilas());
+
+        TableCellRenderer rendererActual = tabla.getDefaultRenderer(Object.class); //Obtiene el renderer actual de las celdas.
+
+        //Solo aplica filas alternadas cuando la tabla no tiene un renderer personalizado. Así no daña los colores de Calendarización.
+        if (rendererActual instanceof UIResource) {
+            tabla.setDefaultRenderer(Object.class, new RenderizadorFilas());
         }
+        tabla.revalidate();
+        tabla.repaint();
     }
 
     /**
