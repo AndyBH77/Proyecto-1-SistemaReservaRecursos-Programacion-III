@@ -39,6 +39,42 @@ public class CategoriaRecursoDAO {
         XmlManager.guardar(data, CategoriasData.class, ARCHIVO);
     }
 
+    /**
+     * Inserta la categoría si el ID no existe, o actualiza la descripción
+     * si ya existe (upsert).
+     */
+    public void guardar(CategoriaRecurso categoria) {
+        List<CategoriaRecurso> lista = listarTodas();
+        Optional<CategoriaRecurso> existente = lista.stream()
+                .filter(c -> c.getId().equalsIgnoreCase(categoria.getId()))
+                .findFirst();
+
+        if (existente.isPresent()) {
+            existente.get().setDescripcion(categoria.getDescripcion());
+        } else {
+            lista.add(categoria);
+        }
+        guardarTodas(lista);
+    }
+
+    public void eliminar(String id) {
+        List<CategoriaRecurso> lista = listarTodas();
+        lista.removeIf(c -> c.getId().equalsIgnoreCase(id));
+        guardarTodas(lista);
+    }
+
+    public List<CategoriaRecurso> buscarPorTexto(String texto) {
+        String filtro = (texto == null) ? "" : texto.trim().toLowerCase();
+        List<CategoriaRecurso> resultado = new ArrayList<>();
+        for (CategoriaRecurso c : listarTodas()) {
+            if (c.getId().toLowerCase().contains(filtro)
+                    || c.getDescripcion().toLowerCase().contains(filtro)) {
+                resultado.add(c);
+            }
+        }
+        return resultado;
+    }
+
     private CategoriasData crearDatosSemilla() {
         CategoriasData data = new CategoriasData();
         List<CategoriaRecurso> lista = new ArrayList<>();
