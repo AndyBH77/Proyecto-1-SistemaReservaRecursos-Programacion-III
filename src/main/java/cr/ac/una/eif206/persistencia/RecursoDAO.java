@@ -4,6 +4,7 @@ import cr.ac.una.eif206.modelo.Recurso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * DAO basico de Recursos. Igual que CategoriaRecursoDAO, el CRUD completo
@@ -37,6 +38,45 @@ public class RecursoDAO {
         RecursosData data = new RecursosData();
         data.setRecursos(recursos);
         XmlManager.guardar(data, RecursosData.class, ARCHIVO);
+    }
+
+    /**
+     * Inserta el recurso si el ID no existe, o actualiza sus datos
+     * si ya existe (upsert).
+     */
+    public void guardar(Recurso recurso) {
+        List<Recurso> lista = listarTodos();
+        Optional<Recurso> existente = lista.stream()
+                .filter(r -> r.getId().equalsIgnoreCase(recurso.getId()))
+                .findFirst();
+
+        if (existente.isPresent()) {
+            Recurso actual = existente.get();
+            actual.setIdCategoria(recurso.getIdCategoria());
+            actual.setDescripcion(recurso.getDescripcion());
+        } else {
+            lista.add(recurso);
+        }
+        guardarTodos(lista);
+    }
+
+    public void eliminar(String id) {
+        List<Recurso> lista = listarTodos();
+        lista.removeIf(r -> r.getId().equalsIgnoreCase(id));
+        guardarTodos(lista);
+    }
+
+    public List<Recurso> buscarPorTexto(String texto) {
+        String filtro = (texto == null) ? "" : texto.trim().toLowerCase();
+        List<Recurso> resultado = new ArrayList<>();
+        for (Recurso r : listarTodos()) {
+            if (r.getId().toLowerCase().contains(filtro)
+                    || r.getIdCategoria().toLowerCase().contains(filtro)
+                    || r.getDescripcion().toLowerCase().contains(filtro)) {
+                resultado.add(r);
+            }
+        }
+        return resultado;
     }
 
     private RecursosData crearDatosSemilla() {
