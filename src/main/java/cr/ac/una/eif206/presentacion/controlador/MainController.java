@@ -26,6 +26,14 @@ public class MainController {
         if (vista.getFuncionarioView() != null) {
             new FuncionarioController(vista.getFuncionarioView());
         }
+
+        if (vista.getCategoriaRecursoView() != null) {
+            new CategoriaRecursoController(vista.getCategoriaRecursoView());
+        }
+
+        if (vista.getRecursoView() != null) {
+            new RecursoController(vista.getRecursoView());
+        }
     }
 
     private void registrarEventos() {
