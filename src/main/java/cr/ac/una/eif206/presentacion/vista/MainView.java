@@ -18,11 +18,9 @@ public class MainView extends JFrame {
 
     private final JTabbedPane tabbedPane = new JTabbedPane();
     private final ReservaView reservaView;
-
-    // Solo se crea si el usuario logueado es Administrador (ver mas abajo).
-    // Queda null para un Funcionario normal, por eso el getter avisa que
-    // puede devolver null.
     private FuncionarioView funcionarioView;
+    private CategoriaRecursoView categoriaRecursoView;
+    private RecursoView recursoView;
 
     private final JButton btnCambiarClave = new JButton("Cambiar clave");
     private final JButton btnCerrarSesion = new JButton("Cerrar sesión");
@@ -45,8 +43,12 @@ public class MainView extends JFrame {
         if (usuarioActual.getRol() == RolUsuario.ADMINISTRADOR) {
             funcionarioView = new FuncionarioView();
             tabbedPane.addTab("Funcionarios", funcionarioView);
-            tabbedPane.addTab("Categorías", new PanelEnConstruccion("Lista de categorías de recurso"));
-            tabbedPane.addTab("Recursos", new PanelEnConstruccion("Lista de recursos"));
+
+            categoriaRecursoView = new CategoriaRecursoView();
+            tabbedPane.addTab("Categorías", categoriaRecursoView);
+
+            recursoView = new RecursoView();
+            tabbedPane.addTab("Recursos", recursoView);
         }
 
         JPanel barraSuperior = new JPanel();
@@ -63,6 +65,14 @@ public class MainView extends JFrame {
 
     public FuncionarioView getFuncionarioView() {
         return funcionarioView;
+    }
+
+    public CategoriaRecursoView getCategoriaRecursoView() {
+        return categoriaRecursoView;
+    }
+
+    public RecursoView getRecursoView() {
+        return recursoView;
     }
 
     public JButton getBtnCambiarClave() {
