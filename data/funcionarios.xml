@@ -1,2 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<funcionarios/>
+<funcionarios>
+    <funcionario>
+        <id>119490060</id>
+        <clave>aZgDqE266T</clave>
+        <rol>FUNCIONARIO</rol>
+        <email>benjaminjosh1321@gmail.com</email>
+        <nombre>Benjamin</nombre>
+        <telefono>86231180</telefono>
+    </funcionario>
+</funcionarios>
