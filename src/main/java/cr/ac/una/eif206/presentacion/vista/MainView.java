@@ -23,7 +23,7 @@ import java.awt.FlowLayout;
 public class MainView extends JFrame {
 
     private final JTabbedPane tabbedPane = new JTabbedPane();
-    private final ReservaView reservaView;
+    private ReservaView reservaView;
     private final CalendarizacionView calendarizacionView;
     private final ActividadesView actividadesView;
     private final EstadisticasView estadisticasView;
@@ -42,12 +42,15 @@ public class MainView extends JFrame {
         setResizable(false);
         setLocationRelativeTo(null);
 
-        reservaView = new ReservaView();
         calendarizacionView = new CalendarizacionView();
         actividadesView = new ActividadesView();
         estadisticasView = new EstadisticasView();
 
-        tabbedPane.addTab("Reservas", reservaView);
+        if (usuarioActual.getRol() == RolUsuario.FUNCIONARIO) {
+            reservaView = new ReservaView();
+            tabbedPane.addTab("Reservas", reservaView);
+        }
+
         tabbedPane.addTab("Calendarización", calendarizacionView);
         tabbedPane.addTab("Actividades", actividadesView);
         tabbedPane.addTab("Estadísticas", estadisticasView);
@@ -91,6 +94,9 @@ public class MainView extends JFrame {
         panelSesion.setOpaque(false);
     }
 
+    /**
+     * @return la vista de Reservas, o null si el usuario actual es Administrador.
+     */
     public ReservaView getReservaView() {
         return reservaView;
     }

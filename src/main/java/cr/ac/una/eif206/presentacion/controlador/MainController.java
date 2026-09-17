@@ -23,10 +23,13 @@ public class MainController {
         this.usuarioActual = usuarioActual;
         registrarEventos();
 
-        new ReservaController(vista.getReservaView(), usuarioActual);
         new CalendarizacionController(vista.getCalendarizacionView());
         new ActividadesController(vista.getActividadesView());
         new EstadisticasController(vista.getEstadisticasView());
+
+        if (vista.getReservaView() != null) {
+            new ReservaController(vista.getReservaView(), usuarioActual);
+        }
 
         if (vista.getFuncionarioView() != null) {
             new FuncionarioController(vista.getFuncionarioView());
