@@ -79,6 +79,12 @@ public class RecursoDAO {
         return resultado;
     }
 
+    public Optional<Recurso> buscarPorId(String id) {
+        return listarTodos().stream()
+                .filter(r -> r.getId().equalsIgnoreCase(id))
+                .findFirst();
+    }
+
     private RecursosData crearDatosSemilla() {
         RecursosData data = new RecursosData();
         List<Recurso> lista = new ArrayList<>();

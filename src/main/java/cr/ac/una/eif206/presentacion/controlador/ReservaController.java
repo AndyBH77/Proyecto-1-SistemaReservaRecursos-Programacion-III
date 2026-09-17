@@ -26,6 +26,7 @@ public class ReservaController {
     private final boolean esAdministrador;
     private final ReservaService reservaService = new ReservaService();
     private final LlmExtractorService llmExtractorService = new LlmExtractorService();
+    private final cr.ac.una.eif206.persistencia.RecursoDAO recursoDAO = new cr.ac.una.eif206.persistencia.RecursoDAO();
 
     private List<CategoriaRecurso> categoriasDisponibles;
     private String idReservaSeleccionada;
@@ -77,7 +78,13 @@ public class ReservaController {
 
         for (Reserva r : reservas) {
             String horario = r.getHoraInicio() + " - " + r.getHoraFin();
-            String recursos = String.join(", ", r.getIdsRecursosAsignados());
+
+            List<String> nombresRecursos = new ArrayList<>();
+            for (String idRecurso : r.getIdsRecursosAsignados()) {
+                nombresRecursos.add(obtenerNombreRecurso(idRecurso));
+            }
+            String recursos = String.join(", ", nombresRecursos);
+
             vista.getModeloTablaReservas().addRow(new Object[]{
                     r.getId(), r.getIdFuncionario(), r.getActividad(), r.getFecha(), horario, recursos, r.getEstado()
             });
@@ -271,6 +278,12 @@ public class ReservaController {
             JOptionPane.showMessageDialog(vista, "No se pudo generar el reporte: " + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private String obtenerNombreRecurso(String idRecurso) {
+        return recursoDAO.buscarPorId(idRecurso)
+                .map(recurso -> recurso.getDescripcion())
+                .orElse(idRecurso); // Si no lo encuentra, muestra el ID por defecto
     }
 
     private DatosFormulario leerFormulario() {

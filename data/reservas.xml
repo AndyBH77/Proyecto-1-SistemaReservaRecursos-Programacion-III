@@ -11,4 +11,26 @@
         <idCategoria>CAT-000003</idCategoria>
         <idRecurso>452784</idRecurso>
     </reserva>
+    <reserva>
+        <id>RES-000002</id>
+        <idFuncionario>admin</idFuncionario>
+        <actividad>confi</actividad>
+        <fecha>2026-09-13</fecha>
+        <horaInicio>18:19</horaInicio>
+        <horaFin>23:19</horaFin>
+        <estado>ACTIVA</estado>
+        <idCategoria>CAT-000002</idCategoria>
+        <idRecurso>238715</idRecurso>
+    </reserva>
+    <reserva>
+        <id>RES-000003</id>
+        <idFuncionario>119</idFuncionario>
+        <actividad>Coding</actividad>
+        <fecha>2026-09-16</fecha>
+        <horaInicio>19:28</horaInicio>
+        <horaFin>22:28</horaFin>
+        <estado>ACTIVA</estado>
+        <idCategoria>CAT-000004</idCategoria>
+        <idRecurso>AUL-1001</idRecurso>
+    </reserva>
 </reservas>

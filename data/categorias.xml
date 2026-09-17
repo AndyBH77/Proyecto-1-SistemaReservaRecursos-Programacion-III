@@ -16,4 +16,8 @@
         <id>CAT-000004</id>
         <descripcion>PC Linux</descripcion>
     </categoria>
+    <categoria>
+        <id>CAT-000005</id>
+        <descripcion>Comedor</descripcion>
+    </categoria>
 </categorias>
