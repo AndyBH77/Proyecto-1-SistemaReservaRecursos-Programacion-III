@@ -3,6 +3,7 @@ package cr.ac.una.eif206.presentacion.controlador;
 import cr.ac.una.eif206.modelo.CategoriaRecurso;
 import cr.ac.una.eif206.persistencia.CategoriaRecursoDAO;
 import cr.ac.una.eif206.presentacion.vista.CategoriaRecursoView;
+import cr.ac.una.eif206.reportes.ReportePdfGenerator;
 
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -25,6 +26,7 @@ public class CategoriaRecursoController {
         vista.getBtnEliminar().addActionListener(e -> eliminar());
         vista.getBtnLimpiar().addActionListener(e -> limpiarFormulario());
         vista.getBtnBuscar().addActionListener(e -> buscar());
+        vista.getBtnImprimir().addActionListener(e -> imprimir());
 
         vista.getTabla().getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
@@ -93,6 +95,22 @@ public class CategoriaRecursoController {
     private void buscar() {
         String texto = vista.getTxtBusqueda().getText();
         cargarTabla(dao.buscarPorTexto(texto));
+    }
+
+    private void imprimir() {
+        if (vista.getTabla().getRowCount() == 0) {
+            JOptionPane.showMessageDialog(vista, "No hay categorías para imprimir.",
+                    "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        try {
+            String ruta = ReportePdfGenerator.generarReporteTabla("Listado de Categorias", vista.getTabla());
+            JOptionPane.showMessageDialog(vista, "Reporte generado en:\n" + ruta,
+                    "Reporte PDF generado", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(vista, "No se pudo generar el reporte: " + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void limpiarFormulario() {

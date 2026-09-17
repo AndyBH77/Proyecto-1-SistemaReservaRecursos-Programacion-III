@@ -26,6 +26,7 @@ public class RecursoView extends JPanel {
 
     private final JTextField txtBusqueda = new JTextField(20);
     private final JButton btnBuscar = new JButton("Buscar");
+    private final JButton btnImprimir = new JButton("Imprimir PDF");
 
     private final DefaultTableModel modeloTabla = new DefaultTableModel(
             new Object[]{"ID", "ID Categoría", "Descripción"}, 0) {
@@ -88,6 +89,7 @@ public class RecursoView extends JPanel {
         panel.add(new JLabel("Buscar:"));
         panel.add(txtBusqueda);
         panel.add(btnBuscar);
+        panel.add(btnImprimir);
         return panel;
     }
 
@@ -121,6 +123,10 @@ public class RecursoView extends JPanel {
 
     public JButton getBtnBuscar() {
         return btnBuscar;
+    }
+
+    public JButton getBtnImprimir() {
+        return btnImprimir;
     }
 
     public DefaultTableModel getModeloTabla() {

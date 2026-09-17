@@ -25,6 +25,7 @@ public class CategoriaRecursoView extends JPanel {
 
     private final JTextField txtBusqueda = new JTextField(20);
     private final JButton btnBuscar = new JButton("Buscar");
+    private final JButton btnImprimir = new JButton("Imprimir PDF");
 
     private final DefaultTableModel modeloTabla = new DefaultTableModel(
             new Object[]{"ID", "Descripción"}, 0) {
@@ -81,6 +82,7 @@ public class CategoriaRecursoView extends JPanel {
         panel.add(new JLabel("Buscar:"));
         panel.add(txtBusqueda);
         panel.add(btnBuscar);
+        panel.add(btnImprimir);
         return panel;
     }
 
@@ -112,6 +114,10 @@ public class CategoriaRecursoView extends JPanel {
         return btnBuscar;
     }
 
+    public JButton getBtnImprimir() {
+        return btnImprimir;
+    }
+
     public DefaultTableModel getModeloTabla() {
         return modeloTabla;
     }
@@ -119,4 +125,5 @@ public class CategoriaRecursoView extends JPanel {
     public JTable getTabla() {
         return tabla;
     }
+
 }

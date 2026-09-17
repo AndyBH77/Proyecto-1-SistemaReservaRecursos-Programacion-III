@@ -28,6 +28,7 @@ public class FuncionarioView extends JPanel {
     private final JTextField txtBuscar = new JTextField();
     private final JButton btnBuscar = new JButton("Buscar");
     private final JButton btnMostrarTodos = new JButton("Mostrar todos");
+    private final JButton btnImprimir = new JButton("Imprimir PDF");
 
     private final TitledBorder bordeTabla = BorderFactory.createTitledBorder("Funcionarios registrados");
 
@@ -109,6 +110,7 @@ public class FuncionarioView extends JPanel {
         panelBusqueda.add(txtBuscar);
         panelBusqueda.add(btnBuscar);
         panelBusqueda.add(btnMostrarTodos);
+        panelBusqueda.add(btnImprimir);
 
         panel.add(panelBusqueda, BorderLayout.NORTH);
         panel.add(new JScrollPane(tablaFuncionarios), BorderLayout.CENTER);
@@ -131,6 +133,7 @@ public class FuncionarioView extends JPanel {
     public JTextField getTxtBuscar() { return txtBuscar; }
     public JButton getBtnBuscar() { return btnBuscar; }
     public JButton getBtnMostrarTodos() { return btnMostrarTodos; }
+    public JButton getBtnImprimir() { return btnImprimir; }
     public DefaultTableModel getModeloTabla() { return modeloTabla; }
     public JTable getTablaFuncionarios() { return tablaFuncionarios; }
 }

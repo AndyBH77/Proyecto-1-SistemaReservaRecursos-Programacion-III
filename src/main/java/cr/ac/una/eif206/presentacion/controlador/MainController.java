@@ -7,9 +7,11 @@ import cr.ac.una.eif206.presentacion.vista.MainView;
 
 /**
  * Controlador general de la ventana principal: maneja el boton de cambiar
- * clave y el de cerrar sesion. Ademas activa el controlador de la pestaña
- * de Reservas y, si el usuario es Administrador, el de la pestaña de
- * Funcionarios.
+ * clave y el de cerrar sesion. Ademas activa los controladores de las
+ * pestañas de Reservas, Calendarización, Actividades y Estadísticas (estas
+ * ultimas disponibles tanto para Administrador como para Funcionario) y, si
+ * el usuario es Administrador, los de las pestañas de Funcionarios,
+ * Categorías y Recursos.
  */
 public class MainController {
 
@@ -22,6 +24,9 @@ public class MainController {
         registrarEventos();
 
         new ReservaController(vista.getReservaView(), usuarioActual);
+        new CalendarizacionController(vista.getCalendarizacionView());
+        new ActividadesController(vista.getActividadesView());
+        new EstadisticasController(vista.getEstadisticasView());
 
         if (vista.getFuncionarioView() != null) {
             new FuncionarioController(vista.getFuncionarioView());

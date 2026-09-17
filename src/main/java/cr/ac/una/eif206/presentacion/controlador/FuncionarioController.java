@@ -4,6 +4,7 @@ import cr.ac.una.eif206.modelo.Funcionario;
 import cr.ac.una.eif206.negocio.AutenticacionService;
 import cr.ac.una.eif206.persistencia.FuncionarioDAO;
 import cr.ac.una.eif206.presentacion.vista.FuncionarioView;
+import cr.ac.una.eif206.reportes.ReportePdfGenerator;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
@@ -33,6 +34,7 @@ public class FuncionarioController {
             vista.getTxtBuscar().setText("");
             cargarTabla(funcionarioDAO.listarTodos());
         });
+        vista.getBtnImprimir().addActionListener(e -> imprimir());
 
         vista.getTablaFuncionarios().getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
@@ -56,6 +58,22 @@ public class FuncionarioController {
             cargarTabla(funcionarioDAO.listarTodos());
         } else {
             cargarTabla(funcionarioDAO.buscarPorTexto(texto));
+        }
+    }
+
+    private void imprimir() {
+        if (vista.getTablaFuncionarios().getRowCount() == 0) {
+            JOptionPane.showMessageDialog(vista, "No hay funcionarios para imprimir.",
+                    "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        try {
+            String ruta = ReportePdfGenerator.generarReporteTabla("Listado de Funcionarios", vista.getTablaFuncionarios());
+            JOptionPane.showMessageDialog(vista, "Reporte generado en:\n" + ruta,
+                    "Reporte PDF generado", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(vista, "No se pudo generar el reporte: " + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
