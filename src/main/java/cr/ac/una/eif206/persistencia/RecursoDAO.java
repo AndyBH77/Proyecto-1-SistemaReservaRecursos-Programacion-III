@@ -88,10 +88,58 @@ public class RecursoDAO {
     private RecursosData crearDatosSemilla() {
         RecursosData data = new RecursosData();
         List<Recurso> lista = new ArrayList<>();
-        lista.add(new Recurso("34343", "CAT-000001", "Sala 1 primer piso"));
-        lista.add(new Recurso("238715", "CAT-000002", "Laptop #238715"));
-        lista.add(new Recurso("45238", "CAT-000002", "Laptop #45238"));
-        lista.add(new Recurso("452784", "CAT-000003", "Sala de Juntas - Torre A"));
+        int idContador = 1;
+
+        for (int i = 1; i <= 4; i++) {
+            lista.add(new Recurso(String.format("REC-%06d", idContador++), "CAT-000001", "Sala para 10 personas - Nivel " + i));
+        }
+
+        for (int i = 1; i <= 4; i++) {
+            lista.add(new Recurso(String.format("REC-%06d", idContador++), "CAT-000002", "Laptop Dell Latitude #" + i));
+        }
+
+        lista.add(new Recurso(String.format("REC-%06d", idContador++), "CAT-000003", "Sala de Juntas - Torre A"));
+        lista.add(new Recurso(String.format("REC-%06d", idContador++), "CAT-000003", "Sala de Juntas - Torre B"));
+        lista.add(new Recurso(String.format("REC-%06d", idContador++), "CAT-000003", "Sala de Juntas - Ejecutiva"));
+        lista.add(new Recurso(String.format("REC-%06d", idContador++), "CAT-000003", "Sala de Juntas - Anexo"));
+
+        for (int cat = 4; cat <= 14; cat++) {
+            String idCat = String.format("CAT-%06d", cat);
+            String nombreAula = (cat <= 9) ? "100" + (cat - 3) : "200" + (cat - 9);
+            for (int i = 1; i <= 4; i++) {
+                lista.add(new Recurso(String.format("REC-%06d", idContador++), idCat, "Estación de trabajo " + i + " - Aula " + nombreAula));
+            }
+        }
+
+        for (int i = 1; i <= 4; i++) {
+            lista.add(new Recurso(String.format("REC-%06d", idContador++), "CAT-000015", "Silla ergonómica negra #" + i));
+        }
+
+
+        for (int i = 1; i <= 4; i++) {
+            lista.add(new Recurso(String.format("REC-%06d", idContador++), "CAT-000016", "Silla estándar azul #" + i));
+        }
+
+        for (int i = 1; i <= 4; i++) {
+            lista.add(new Recurso(String.format("REC-%06d", idContador++), "CAT-000017", "Lote de 10 sillas plegables - Bodega " + i));
+        }
+
+        for (int i = 1; i <= 4; i++) {
+            lista.add(new Recurso(String.format("REC-%06d", idContador++), "CAT-000018", "MacBook Pro M2 - Diseño #" + i));
+        }
+
+        for (int i = 1; i <= 4; i++) {
+            lista.add(new Recurso(String.format("REC-%06d", idContador++), "CAT-000019", "PC Escritorio HP - Lab " + i));
+        }
+
+        for (int i = 1; i <= 4; i++) {
+            lista.add(new Recurso(String.format("REC-%06d", idContador++), "CAT-000020", "ThinkPad Ubuntu - IT #" + i));
+        }
+
+        for (int i = 1; i <= 4; i++) {
+            lista.add(new Recurso(String.format("REC-%06d", idContador++), "CAT-000021", "iPad Pro 11 - Sala Juntas #" + i));
+        }
+
         data.setRecursos(lista);
         XmlManager.guardar(data, RecursosData.class, ARCHIVO);
         return data;

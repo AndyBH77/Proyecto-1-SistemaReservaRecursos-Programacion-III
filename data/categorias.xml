@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <categorias>
+    <!-- Categorías Originales -->
     <categoria>
         <id>CAT-000001</id>
         <descripcion>Sala para 10 personas</descripcion>
@@ -19,5 +20,46 @@
     <categoria>
         <id>CAT-000005</id>
         <descripcion>Comedor</descripcion>
+    </categoria>
+
+    <categoria>
+        <id>CAT-000007</id>
+        <descripcion>Aula / Laboratorio</descripcion>
+    </categoria>
+    <categoria>
+        <id>CAT-000010</id>
+        <descripcion>Aula Estándar</descripcion>
+    </categoria>
+    <categoria>
+        <id>CAT-000014</id>
+        <descripcion>Auditorio</descripcion>
+    </categoria>
+    <categoria>
+        <id>CAT-000015</id>
+        <descripcion>Silla Ergonómica</descripcion>
+    </categoria>
+    <categoria>
+        <id>CAT-000016</id>
+        <descripcion>Silla de Oficina Estándar</descripcion>
+    </categoria>
+    <categoria>
+        <id>CAT-000017</id>
+        <descripcion>Sillas Plegables</descripcion>
+    </categoria>
+    <categoria>
+        <id>CAT-000018</id>
+        <descripcion>Laptop macOS</descripcion>
+    </categoria>
+    <categoria>
+        <id>CAT-000019</id>
+        <descripcion>PC de Escritorio</descripcion>
+    </categoria>
+    <categoria>
+        <id>CAT-000020</id>
+        <descripcion>Laptop Linux</descripcion>
+    </categoria>
+    <categoria>
+        <id>CAT-000021</id>
+        <descripcion>Tablet / Dispositivo Móvil</descripcion>
     </categoria>
 </categorias>

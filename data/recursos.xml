@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <recursos>
-    <!-- Recursos originales -->
     <recurso>
         <id>34343</id>
         <idCategoria>CAT-000001</idCategoria>
@@ -21,11 +20,9 @@
         <idCategoria>CAT-000003</idCategoria>
         <descripcion>Sala de Juntas - Torre A</descripcion>
     </recurso>
-
-    <!-- Nuevas Aulas -->
     <recurso>
         <id>AUL-1001</id>
-        <idCategoria>CAT-000004</idCategoria>
+        <idCategoria>CAT-000007</idCategoria>
         <descripcion>Aula 1001 - Edificio Central</descripcion>
     </recurso>
     <recurso>
@@ -43,8 +40,6 @@
         <idCategoria>CAT-000014</idCategoria>
         <descripcion>Aula 2005 - Auditorio Pequeño</descripcion>
     </recurso>
-
-    <!-- Sillas y Mobiliario -->
     <recurso>
         <id>SIL-ERG-01</id>
         <idCategoria>CAT-000015</idCategoria>
@@ -65,8 +60,6 @@
         <idCategoria>CAT-000017</idCategoria>
         <descripcion>Lote de 10 sillas plegables (Bodega 1)</descripcion>
     </recurso>
-
-    <!-- Más Computadoras y Equipo -->
     <recurso>
         <id>MAC-8932</id>
         <idCategoria>CAT-000018</idCategoria>
@@ -86,5 +79,10 @@
         <id>IPAD-007</id>
         <idCategoria>CAT-000021</idCategoria>
         <descripcion>iPad Pro - Sala de Juntas</descripcion>
+    </recurso>
+    <recurso>
+        <id>REC-000001</id>
+        <idCategoria>CAT-000005</idCategoria>
+        <descripcion>Comedor Principal</descripcion>
     </recurso>
 </recursos>
