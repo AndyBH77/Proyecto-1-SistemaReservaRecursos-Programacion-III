@@ -40,6 +40,8 @@ public class CategoriaRecursoView extends JPanel {
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
+        txtId.setEditable(false); // ¡AGREGAR ESTA LÍNEA!
+
         add(construirPanelFormulario(), BorderLayout.NORTH);
         add(new JScrollPane(tabla), BorderLayout.CENTER);
         add(construirPanelBusqueda(), BorderLayout.SOUTH);

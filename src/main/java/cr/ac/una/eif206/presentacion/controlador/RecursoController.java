@@ -43,9 +43,10 @@ public class RecursoController {
         String idCategoria = vista.getTxtIdCategoria().getText().trim();
         String descripcion = vista.getTxtDescripcion().getText().trim();
 
-        if (id.isEmpty() || idCategoria.isEmpty() || descripcion.isEmpty()) {
+        // Ahora solo exigimos categoría y descripción
+        if (idCategoria.isEmpty() || descripcion.isEmpty()) {
             JOptionPane.showMessageDialog(vista,
-                    "Debe completar el ID, el ID de categoría y la descripción.",
+                    "Debe completar el ID de categoría y la descripción.",
                     "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -57,10 +58,15 @@ public class RecursoController {
             return;
         }
 
+        // Si el campo ID está vacío, generamos uno nuevo
+        if (id.isEmpty()) {
+            id = generarNuevoId();
+        }
+
         try {
             dao.guardar(new Recurso(id, idCategoria, descripcion));
             JOptionPane.showMessageDialog(vista,
-                    "Recurso guardado correctamente.",
+                    "Recurso guardado correctamente.\nID asignado: " + id,
                     "Información", JOptionPane.INFORMATION_MESSAGE);
             limpiarFormulario();
             cargarTabla(dao.listarTodos());
@@ -69,6 +75,26 @@ public class RecursoController {
                     "Ocurrió un error al guardar el recurso: " + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private String generarNuevoId() {
+        int maximo = 0;
+        for (Recurso r : dao.listarTodos()) {
+            String idActual = r.getId();
+            if (idActual != null && idActual.toUpperCase().startsWith("REC-")) {
+                try {
+                    // Extraemos el número después de "REC-"
+                    int numero = Integer.parseInt(idActual.substring(4));
+                    if (numero > maximo) {
+                        maximo = numero;
+                    }
+                } catch (NumberFormatException ignored) {
+                    // Si el formato falla, lo ignoramos
+                }
+            }
+        }
+        // Retornamos el siguiente número con formato de 6 dígitos
+        return String.format("REC-%06d", maximo + 1);
     }
 
     private void eliminar() {

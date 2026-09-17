@@ -39,17 +39,23 @@ public class CategoriaRecursoController {
         String id = vista.getTxtId().getText().trim();
         String descripcion = vista.getTxtDescripcion().getText().trim();
 
-        if (id.isEmpty() || descripcion.isEmpty()) {
+        // Ahora solo validamos que la descripción no esté vacía
+        if (descripcion.isEmpty()) {
             JOptionPane.showMessageDialog(vista,
-                    "Debe completar el ID y la descripción.",
+                    "Debe completar la descripción.",
                     "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
+        }
+
+        // Si el campo ID está vacío, es un registro nuevo y lo generamos
+        if (id.isEmpty()) {
+            id = generarNuevoId();
         }
 
         try {
             dao.guardar(new CategoriaRecurso(id, descripcion));
             JOptionPane.showMessageDialog(vista,
-                    "Categoría guardada correctamente.",
+                    "Categoría guardada correctamente.\nID asignado: " + id,
                     "Información", JOptionPane.INFORMATION_MESSAGE);
             limpiarFormulario();
             cargarTabla(dao.listarTodas());
@@ -58,6 +64,26 @@ public class CategoriaRecursoController {
                     "Ocurrió un error al guardar la categoría: " + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private String generarNuevoId() {
+        int maximo = 0;
+        for (CategoriaRecurso c : dao.listarTodas()) {
+            String idActual = c.getId();
+            if (idActual != null && idActual.toUpperCase().startsWith("CAT-")) {
+                try {
+                    // Extraemos el número después de "CAT-"
+                    int numero = Integer.parseInt(idActual.substring(4));
+                    if (numero > maximo) {
+                        maximo = numero;
+                    }
+                } catch (NumberFormatException ignored) {
+                    // Si hay un ID con formato extraño, lo ignoramos en el conteo
+                }
+            }
+        }
+        // Retornamos el siguiente número con formato de 6 dígitos
+        return String.format("CAT-%06d", maximo + 1);
     }
 
     private void eliminar() {

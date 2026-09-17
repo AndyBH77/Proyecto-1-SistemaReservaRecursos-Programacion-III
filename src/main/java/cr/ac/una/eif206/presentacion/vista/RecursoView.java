@@ -41,6 +41,8 @@ public class RecursoView extends JPanel {
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
+        txtId.setEditable(false);
+
         add(construirPanelFormulario(), BorderLayout.NORTH);
         add(new JScrollPane(tabla), BorderLayout.CENTER);
         add(construirPanelBusqueda(), BorderLayout.SOUTH);
