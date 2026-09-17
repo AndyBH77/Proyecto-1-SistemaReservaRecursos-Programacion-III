@@ -24,6 +24,9 @@ public class MainView extends JFrame {
 
     private final JTabbedPane tabbedPane = new JTabbedPane();
     private final ReservaView reservaView;
+    private final CalendarizacionView calendarizacionView;
+    private final ActividadesView actividadesView;
+    private final EstadisticasView estadisticasView;
     private FuncionarioView funcionarioView;
     private CategoriaRecursoView categoriaRecursoView;
     private RecursoView recursoView;
@@ -40,11 +43,14 @@ public class MainView extends JFrame {
         setLocationRelativeTo(null);
 
         reservaView = new ReservaView();
+        calendarizacionView = new CalendarizacionView();
+        actividadesView = new ActividadesView();
+        estadisticasView = new EstadisticasView();
 
         tabbedPane.addTab("Reservas", reservaView);
-        tabbedPane.addTab("Calendarización", new PanelEnConstruccion("Calendarización de recursos"));
-        tabbedPane.addTab("Actividades", new PanelEnConstruccion("Programación de actividades"));
-        tabbedPane.addTab("Estadísticas", new PanelEnConstruccion("Estadísticas"));
+        tabbedPane.addTab("Calendarización", calendarizacionView);
+        tabbedPane.addTab("Actividades", actividadesView);
+        tabbedPane.addTab("Estadísticas", estadisticasView);
 
         if (usuarioActual.getRol() == RolUsuario.ADMINISTRADOR) {
             funcionarioView = new FuncionarioView();
@@ -87,6 +93,18 @@ public class MainView extends JFrame {
 
     public ReservaView getReservaView() {
         return reservaView;
+    }
+
+    public CalendarizacionView getCalendarizacionView() {
+        return calendarizacionView;
+    }
+
+    public ActividadesView getActividadesView() {
+        return actividadesView;
+    }
+
+    public EstadisticasView getEstadisticasView() {
+        return estadisticasView;
     }
 
     public FuncionarioView getFuncionarioView() {
