@@ -21,7 +21,10 @@
         <id>CAT-000005</id>
         <descripcion>Comedor</descripcion>
     </categoria>
-
+    <categoria>
+        <id>CAT-000006</id>
+        <descripcion>Área de Descanso</descripcion>
+    </categoria>
     <categoria>
         <id>CAT-000007</id>
         <descripcion>Aula / Laboratorio</descripcion>

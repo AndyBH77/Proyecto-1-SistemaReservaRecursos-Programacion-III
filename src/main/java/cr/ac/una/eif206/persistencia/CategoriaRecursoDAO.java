@@ -103,6 +103,7 @@ public class CategoriaRecursoDAO {
         lista.add(new CategoriaRecurso("CAT-000020", "Laptop Linux (Ubuntu)"));
         lista.add(new CategoriaRecurso("CAT-000021", "Tablet iPad"));
         data.setCategorias(lista);
+
         XmlManager.guardar(data, CategoriasData.class, ARCHIVO);
         return data;
     }

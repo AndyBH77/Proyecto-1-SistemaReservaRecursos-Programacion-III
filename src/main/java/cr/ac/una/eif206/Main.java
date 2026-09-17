@@ -23,6 +23,7 @@ public class Main {
             LoginView loginView = new LoginView();
             new LoginController(loginView);
             loginView.setVisible(true);
+
         });
     }
 }
