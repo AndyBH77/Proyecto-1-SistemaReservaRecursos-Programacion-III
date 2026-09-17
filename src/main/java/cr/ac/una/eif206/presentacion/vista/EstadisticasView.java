@@ -60,6 +60,11 @@ public class EstadisticasView extends JPanel {
         tabla.setRowHeight(24);
         tabla.getTableHeader().setBackground(new Color(49, 73, 102));
         tabla.getTableHeader().setForeground(Color.WHITE);
+        // JTable pide por defecto un viewport de 450x400 para su JScrollPane,
+        // sin importar cuántas filas tenga. Si no se limita, la lista se come
+        // casi todo el espacio vertical del panel y el gráfico queda invisible.
+        // Se deja una altura pequeña (unas 4 filas) para que el gráfico tenga espacio.
+        tabla.setPreferredScrollableViewportSize(new java.awt.Dimension(200, 96));
         return tabla;
     }
 
