@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <recursos>
+    <!-- Recursos originales -->
     <recurso>
         <id>34343</id>
         <idCategoria>CAT-000001</idCategoria>
@@ -19,5 +20,71 @@
         <id>452784</id>
         <idCategoria>CAT-000003</idCategoria>
         <descripcion>Sala de Juntas - Torre A</descripcion>
+    </recurso>
+
+    <!-- Nuevas Aulas -->
+    <recurso>
+        <id>AUL-1001</id>
+        <idCategoria>CAT-000004</idCategoria>
+        <descripcion>Aula 1001 - Edificio Central</descripcion>
+    </recurso>
+    <recurso>
+        <id>AUL-1004</id>
+        <idCategoria>CAT-000007</idCategoria>
+        <descripcion>Aula 1004 - Laboratorio</descripcion>
+    </recurso>
+    <recurso>
+        <id>AUL-2001</id>
+        <idCategoria>CAT-000010</idCategoria>
+        <descripcion>Aula 2001 - Anexo Norte</descripcion>
+    </recurso>
+    <recurso>
+        <id>AUL-2005</id>
+        <idCategoria>CAT-000014</idCategoria>
+        <descripcion>Aula 2005 - Auditorio Pequeño</descripcion>
+    </recurso>
+
+    <!-- Sillas y Mobiliario -->
+    <recurso>
+        <id>SIL-ERG-01</id>
+        <idCategoria>CAT-000015</idCategoria>
+        <descripcion>Silla ergonómica negra #1</descripcion>
+    </recurso>
+    <recurso>
+        <id>SIL-ERG-02</id>
+        <idCategoria>CAT-000015</idCategoria>
+        <descripcion>Silla ergonómica negra #2</descripcion>
+    </recurso>
+    <recurso>
+        <id>SIL-EST-05</id>
+        <idCategoria>CAT-000016</idCategoria>
+        <descripcion>Silla de oficina estándar azul</descripcion>
+    </recurso>
+    <recurso>
+        <id>LOTE-PLEG-01</id>
+        <idCategoria>CAT-000017</idCategoria>
+        <descripcion>Lote de 10 sillas plegables (Bodega 1)</descripcion>
+    </recurso>
+
+    <!-- Más Computadoras y Equipo -->
+    <recurso>
+        <id>MAC-8932</id>
+        <idCategoria>CAT-000018</idCategoria>
+        <descripcion>MacBook Pro M2 - Depto. Diseño</descripcion>
+    </recurso>
+    <recurso>
+        <id>PC-ESC-105</id>
+        <idCategoria>CAT-000019</idCategoria>
+        <descripcion>PC de Escritorio - Recepción</descripcion>
+    </recurso>
+    <recurso>
+        <id>LIN-404</id>
+        <idCategoria>CAT-000020</idCategoria>
+        <descripcion>Laptop ThinkPad (Ubuntu) - IT</descripcion>
+    </recurso>
+    <recurso>
+        <id>IPAD-007</id>
+        <idCategoria>CAT-000021</idCategoria>
+        <descripcion>iPad Pro - Sala de Juntas</descripcion>
     </recurso>
 </recursos>
