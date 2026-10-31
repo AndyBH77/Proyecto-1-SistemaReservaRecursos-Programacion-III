@@ -4,12 +4,17 @@ import cr.ac.una.eif206.backend.logica.AutenticacionService;
 import cr.ac.una.eif206.backend.logica.CategoriaService;
 import cr.ac.una.eif206.backend.logica.ReservaService;
 import cr.ac.una.eif206.backend.logica.llm.LlmExtractorService;
+import cr.ac.una.eif206.common.modelo.Recurso;
+import cr.ac.una.eif206.common.modelo.Reserva;
 import cr.ac.una.eif206.common.modelo.ResultadoReserva;
 import cr.ac.una.eif206.common.modelo.RolUsuario;
 import cr.ac.una.eif206.common.modelo.Usuario;
+import cr.ac.una.eif206.common.protocolo.Notificacion;
 import cr.ac.una.eif206.common.protocolo.Request;
 import cr.ac.una.eif206.common.protocolo.Response;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 /**
@@ -26,6 +31,9 @@ import java.util.ArrayList;
  *   MODIFICAR_RESERVA   -> "idReserva" + los mismos de CREAR_RESERVA
  *   CANCELAR_RESERVA    -> "idReserva"
  *   EXTRAER_RESERVA_IA  -> "frase"
+ *   ALERTA_PRUEBA       -> (ninguno)  envia una alerta falsa a TODOS (para probar)
+ *
+ * SUSCRIBIR_ALERTAS no esta aqui: lo atiende directamente ManejadorCliente.
  */
 public class ComandosSesionReservas implements ManejadorComandos {
 
@@ -81,8 +89,11 @@ public class ComandosSesionReservas implements ManejadorComandos {
                         request.get("horaFin"),
                         request.get("idsCategorias"));
 
-                // ETAPA 11: aqui se avisara a los DEMAS frontends si resultado.isExito()
-
+                // ALERTAS: si se creo, se avisa a los DEMAS frontends (no al que la hizo)
+                if (resultado.isExito()) {
+                    RegistroConexiones.difundir(new Notificacion(resultado.getReserva()),
+                            sesion.getUsuario().getId());
+                }
                 yield Response.ok(resultado);
             }
 
@@ -110,6 +121,19 @@ public class ComandosSesionReservas implements ManejadorComandos {
                 sesion.exigirSesion();
                 yield Response.ok(llmExtractorService.extraer(
                         request.get("frase"), categoriaService.listarTodas()));
+            }
+
+            // ---------------- Alertas ----------------
+            case ALERTA_PRUEBA -> {
+                // Alerta FALSA para que Benja pruebe su pantalla sin tener que crear reservas.
+                // Se envia a TODOS (incluido quien la pidio).
+                sesion.exigirSesion();
+                Reserva prueba = new Reserva("prueba", "Alerta de prueba", LocalDate.now(),
+                        LocalTime.of(8, 0), LocalTime.of(9, 0));
+                prueba.setNombreFuncionario("Sistema");
+                prueba.getRecursos().add(new Recurso("0000", 0, "Recurso de prueba"));
+                RegistroConexiones.difundir(new Notificacion(prueba), null);
+                yield Response.ok();
             }
 
             default -> null;   // no es un comando de este bloque

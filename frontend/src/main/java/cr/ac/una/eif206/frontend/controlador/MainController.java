@@ -7,13 +7,16 @@ import cr.ac.una.eif206.frontend.vista.LoginView;
 import cr.ac.una.eif206.frontend.vista.MainView;
 import cr.ac.una.eif206.frontend.vista.ReservaView;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 /**
  * Controlador de la ventana principal: botones de sesion, cierre de la
- * ventana, y "conecta" la vista + controlador de cada pestana.
+ * ventana, canal de alertas, y "conecta" la vista + controlador de cada pestana.
  */
 public class MainController {
 
@@ -26,6 +29,7 @@ public class MainController {
         this.usuario = usuario;
         registrarEventos();
         conectarPestanas();
+        iniciarAlertas();
     }
 
     /**
@@ -47,10 +51,28 @@ public class MainController {
             vista.reemplazarPestana(MainView.TAB_RESERVAS, reservaView);
         }
 
-        // ---------- BENJA: Funcionarios, Categorias y Alertas ----------
+        // ---------- BENJA: Funcionarios, Categorias ----------
 
         // ---------- JORDI: Recursos, Calendarizacion, Actividades, Estadisticas ----------
 
+    }
+
+    /**
+     * Abre el canal de alertas (segunda conexion) y muestra cada alerta que llega.
+     *
+     * Por ahora es una LISTA SENCILLA TEMPORAL (solo el titulo), para probar
+     * que las alertas llegan.
+     *
+     * BENJA: reemplaza las 3 lineas de abajo por algo asi:
+     *     AlertasPanel panel = new AlertasPanel();
+     *     AlertasController alertas = new AlertasController(panel);   // implementa AlertaListener
+     *     vista.ponerEnAreaAlertas(panel);
+     *     proxy.iniciarAlertas(usuario.getId(), alertas);
+     */
+    private void iniciarAlertas() {
+        DefaultListModel<String> alertasTemporales = new DefaultListModel<>();
+        vista.ponerEnAreaAlertas(new JScrollPane(new JList<>(alertasTemporales)));
+        proxy.iniciarAlertas(usuario.getId(), notificacion -> alertasTemporales.addElement(notificacion.getTitulo()));
     }
 
     private void registrarEventos() {
@@ -69,7 +91,7 @@ public class MainController {
                 int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea salir del sistema?",
                         "Salir", JOptionPane.YES_NO_OPTION);
                 if (opcion == JOptionPane.YES_OPTION) {
-                    proxy.desconectar();
+                    proxy.desconectar();   // cierra tambien el canal de alertas
                     System.exit(0);
                 }
             }
@@ -78,6 +100,7 @@ public class MainController {
 
     /** Cierra la sesion en el servidor (la conexion sigue abierta) y vuelve al Login. */
     private void cerrarSesion() {
+        proxy.detenerAlertas();   // ya no debe recibir alertas de esta sesion
         try {
             proxy.cerrarSesion();
         } catch (Exception ignored) {

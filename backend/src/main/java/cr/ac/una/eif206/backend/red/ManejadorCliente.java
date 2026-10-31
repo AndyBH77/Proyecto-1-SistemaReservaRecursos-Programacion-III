@@ -1,5 +1,6 @@
 package cr.ac.una.eif206.backend.red;
 
+import cr.ac.una.eif206.common.protocolo.Comando;
 import cr.ac.una.eif206.common.protocolo.Request;
 import cr.ac.una.eif206.common.protocolo.Response;
 
@@ -13,13 +14,12 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * Atiende a UN frontend conectado. Cada instancia corre en su propio hilo.
+ * Atiende a UNA conexion de un frontend. Cada instancia corre en su propio hilo.
  *
- * Ciclo de vida:
- *  1. Recibe el socket ya conectado (lo acepto el Servidor).
- *  2. Lee un Request, lo procesa y responde con un Response. Repite.
- *  3. Cuando el frontend se cierra, readObject lanza EOFException/SocketException
- *     y el hilo termina.
+ * Hay dos tipos de conexion:
+ *  - Normal: recibe Requests y responde Responses (ciclo de siempre).
+ *  - Canal de alertas: el primer Request es SUSCRIBIR_ALERTAS; desde ahi el
+ *    servidor la usa para ENVIARLE notificaciones (RegistroConexiones).
  */
 public class ManejadorCliente implements Runnable {
 
@@ -42,11 +42,11 @@ public class ManejadorCliente implements Runnable {
         String cliente = socket.getRemoteSocketAddress().toString();
         System.out.println("[Servidor] Cliente conectado: " + cliente);
 
+        ObjectOutputStream salida = null;
+
         try (socket) {
-            // IMPORTANTE: crear PRIMERO el ObjectOutputStream y hacer flush().
-            // Si ambos lados crean primero el ObjectInputStream, se quedan
-            // esperandose mutuamente para siempre (deadlock).
-            ObjectOutputStream salida = new ObjectOutputStream(socket.getOutputStream());
+            // IMPORTANTE: primero el ObjectOutputStream + flush(), luego el ObjectInputStream
+            salida = new ObjectOutputStream(socket.getOutputStream());
             salida.flush();
             ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream());
 
@@ -55,23 +55,36 @@ public class ManejadorCliente implements Runnable {
 
                 Response respuesta;
                 if (recibido instanceof Request request) {
-                    System.out.println("[Servidor] " + cliente + " -> " + request.getComando());
-                    respuesta = procesar(request);
+
+                    if (request.getComando() == Comando.SUSCRIBIR_ALERTAS) {
+                        // Esta conexion pasa a ser un canal de alertas
+                        RegistroConexiones.registrar(request.get("idUsuario"), salida);
+                        respuesta = Response.ok();
+                    } else {
+                        System.out.println("[Servidor] " + cliente + " -> " + request.getComando());
+                        respuesta = procesar(request);
+                    }
+
                 } else {
                     respuesta = Response.error("Peticion no valida.");
                 }
 
-                salida.writeObject(respuesta);
-                salida.flush();
-                // reset() evita que Java reenvie una copia "vieja" de un objeto
-                // que ya se habia enviado antes por este mismo stream.
-                salida.reset();
+                // synchronized: en un canal de alertas, difundir() tambien escribe en este stream
+                synchronized (salida) {
+                    salida.writeObject(respuesta);
+                    salida.flush();
+                    salida.reset();
+                }
             }
 
         } catch (EOFException | SocketException e) {
             // Normal: el frontend cerro la conexion.
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("[Servidor] Error con " + cliente + ": " + e.getMessage());
+        } finally {
+            if (salida != null) {
+                RegistroConexiones.quitar(salida);   // si era canal de alertas, deja de recibir
+            }
         }
 
         System.out.println("[Servidor] Cliente desconectado: " + cliente);
@@ -93,10 +106,10 @@ public class ManejadorCliente implements Runnable {
                     + " todavia no esta implementado en el servidor.");
 
         } catch (SQLException e) {
-            e.printStackTrace();   // detalle tecnico en la consola del servidor
+            e.printStackTrace();
             return Response.error("Error de base de datos: " + e.getMessage());
         } catch (Exception e) {
-            return Response.error(e.getMessage());   // errores de validacion
+            return Response.error(e.getMessage());
         }
     }
 }

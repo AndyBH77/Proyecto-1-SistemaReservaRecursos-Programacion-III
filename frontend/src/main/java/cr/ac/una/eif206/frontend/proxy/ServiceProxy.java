@@ -30,6 +30,7 @@ import java.util.Properties;
  * mensaje de error que mando el servidor).
  *
  * Es un SINGLETON: hay una sola instancia (una sola conexion) por frontend.
+ * Ademas maneja el canal de alertas (segunda conexion, EscuchaAlertas).
  *
  * Cada integrante agrega sus metodos SOLO en su bloque (abajo).
  */
@@ -43,6 +44,8 @@ public final class ServiceProxy {
     private Socket socket;
     private ObjectOutputStream salida;
     private ObjectInputStream entrada;
+
+    private EscuchaAlertas escuchaAlertas;
 
     private ServiceProxy() {
         Properties config = new Properties();
@@ -85,7 +88,9 @@ public final class ServiceProxy {
         return socket != null && socket.isConnected() && !socket.isClosed();
     }
 
+    /** Cierra la conexion principal y el canal de alertas. */
     public synchronized void desconectar() {
+        detenerAlertas();
         try {
             if (socket != null) {
                 socket.close();
@@ -200,8 +205,30 @@ public final class ServiceProxy {
         return ejecutar(new Request(Comando.EXTRAER_RESERVA_IA).agregar("frase", frase));
     }
 
-    // ---------------- Alertas (Etapa 11) ----------------
+    // ---------------- Alertas ----------------
 
+    /**
+     * Abre el canal de alertas (segunda conexion) para este usuario.
+     * Cada alerta que llegue se le pasa al listener (en el hilo de Swing).
+     */
+    public synchronized void iniciarAlertas(String idUsuario, AlertaListener listener) {
+        detenerAlertas();   // por si habia uno de una sesion anterior
+        escuchaAlertas = new EscuchaAlertas(host, puerto, idUsuario, listener);
+        escuchaAlertas.start();
+    }
+
+    /** Cierra el canal de alertas (al cerrar sesion). */
+    public synchronized void detenerAlertas() {
+        if (escuchaAlertas != null) {
+            escuchaAlertas.detener();
+            escuchaAlertas = null;
+        }
+    }
+
+    /** Pide al servidor una alerta FALSA para todos (para probar la pantalla de alertas). */
+    public void enviarAlertaPrueba() throws Exception {
+        ejecutar(new Request(Comando.ALERTA_PRUEBA));
+    }
 
     // ==================================================================
     // BENJA: funcionarios y categorias
