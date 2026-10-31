@@ -5,6 +5,7 @@ import cr.ac.una.eif206.frontend.proxy.ServiceProxy;
 import cr.ac.una.eif206.frontend.vista.CambiarClaveView;
 import cr.ac.una.eif206.frontend.vista.LoginView;
 import cr.ac.una.eif206.frontend.vista.MainView;
+import cr.ac.una.eif206.frontend.vista.ReservaView;
 
 import javax.swing.JOptionPane;
 import java.awt.event.WindowAdapter;
@@ -39,6 +40,12 @@ public class MainController {
      */
     private void conectarPestanas() {
         // ---------- ANDY: Reservas (Etapa 10) ----------
+        // Solo existe para FUNCIONARIO (el administrador no tiene esta pestana)
+        if (vista.tienePestana(MainView.TAB_RESERVAS)) {
+            ReservaView reservaView = new ReservaView();
+            new ReservaController(reservaView, usuario);
+            vista.reemplazarPestana(MainView.TAB_RESERVAS, reservaView);
+        }
 
         // ---------- BENJA: Funcionarios, Categorias y Alertas ----------
 

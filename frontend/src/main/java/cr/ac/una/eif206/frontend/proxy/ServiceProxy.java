@@ -1,6 +1,9 @@
 package cr.ac.una.eif206.frontend.proxy;
 
 import cr.ac.una.eif206.common.modelo.CategoriaRecurso;
+import cr.ac.una.eif206.common.modelo.DatosReservaExtraidos;
+import cr.ac.una.eif206.common.modelo.Reserva;
+import cr.ac.una.eif206.common.modelo.ResultadoReserva;
 import cr.ac.una.eif206.common.modelo.Usuario;
 import cr.ac.una.eif206.common.protocolo.Comando;
 import cr.ac.una.eif206.common.protocolo.Request;
@@ -11,6 +14,9 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -132,6 +138,8 @@ public final class ServiceProxy {
     // ANDY: sesion, reservas y alertas
     // ==================================================================
 
+    // ---------------- Sesion ----------------
+
     public Usuario login(String id, String clave) throws Exception {
         return ejecutar(new Request(Comando.LOGIN)
                 .agregar("id", id)
@@ -155,6 +163,45 @@ public final class ServiceProxy {
     public List<CategoriaRecurso> listarCategorias() throws Exception {
         return ejecutar(new Request(Comando.LISTAR_CATEGORIAS));
     }
+
+    // ---------------- Reservas ----------------
+
+    public List<Reserva> listarMisReservas() throws Exception {
+        return ejecutar(new Request(Comando.LISTAR_MIS_RESERVAS));
+    }
+
+    public ResultadoReserva crearReserva(String actividad, LocalDate fecha, LocalTime horaInicio,
+                                         LocalTime horaFin, List<Integer> idsCategorias) throws Exception {
+        return ejecutar(new Request(Comando.CREAR_RESERVA)
+                .agregar("actividad", actividad)
+                .agregar("fecha", fecha)
+                .agregar("horaInicio", horaInicio)
+                .agregar("horaFin", horaFin)
+                .agregar("idsCategorias", new ArrayList<>(idsCategorias)));
+    }
+
+    public ResultadoReserva modificarReserva(int idReserva, String actividad, LocalDate fecha,
+                                             LocalTime horaInicio, LocalTime horaFin,
+                                             List<Integer> idsCategorias) throws Exception {
+        return ejecutar(new Request(Comando.MODIFICAR_RESERVA)
+                .agregar("idReserva", idReserva)
+                .agregar("actividad", actividad)
+                .agregar("fecha", fecha)
+                .agregar("horaInicio", horaInicio)
+                .agregar("horaFin", horaFin)
+                .agregar("idsCategorias", new ArrayList<>(idsCategorias)));
+    }
+
+    public void cancelarReserva(int idReserva) throws Exception {
+        ejecutar(new Request(Comando.CANCELAR_RESERVA).agregar("idReserva", idReserva));
+    }
+
+    public DatosReservaExtraidos extraerReservaIA(String frase) throws Exception {
+        return ejecutar(new Request(Comando.EXTRAER_RESERVA_IA).agregar("frase", frase));
+    }
+
+    // ---------------- Alertas (Etapa 11) ----------------
+
 
     // ==================================================================
     // BENJA: funcionarios y categorias

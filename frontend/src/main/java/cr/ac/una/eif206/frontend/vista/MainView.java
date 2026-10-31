@@ -136,6 +136,7 @@ public class MainView extends JFrame {
         int indice = pestanas.indexOfTab(titulo);
         if (indice >= 0) {
             pestanas.setComponentAt(indice, vistaReal);
+            Estilos.aplicarEstiloGeneral(vistaReal, pestanas);
         }
     }
 
