@@ -33,3 +33,5 @@ public final class ConexionBD {
         return DriverManager.getConnection(url, usuario, clave);
     }
 }
+
+
