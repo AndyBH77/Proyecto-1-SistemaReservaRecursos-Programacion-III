@@ -2,9 +2,13 @@ package cr.ac.una.eif206.frontend.controlador;
 
 import cr.ac.una.eif206.common.modelo.Usuario;
 import cr.ac.una.eif206.frontend.proxy.ServiceProxy;
+import cr.ac.una.eif206.frontend.vista.ActividadesView;
+import cr.ac.una.eif206.frontend.vista.CalendarizacionView;
 import cr.ac.una.eif206.frontend.vista.CambiarClaveView;
+import cr.ac.una.eif206.frontend.vista.EstadisticasView;
 import cr.ac.una.eif206.frontend.vista.LoginView;
 import cr.ac.una.eif206.frontend.vista.MainView;
+import cr.ac.una.eif206.frontend.vista.RecursoView;
 import cr.ac.una.eif206.frontend.vista.ReservaView;
 
 import javax.swing.DefaultListModel;
@@ -54,6 +58,28 @@ public class MainController {
         // ---------- BENJA: Funcionarios, Categorias ----------
 
         // ---------- JORDI: Recursos, Calendarizacion, Actividades, Estadisticas ----------
+        // Recursos: solo existe para ADMINISTRADOR
+        if (vista.tienePestana(MainView.TAB_RECURSOS)) {
+            RecursoView recursoView = new RecursoView();
+            new RecursoController(recursoView);
+            vista.reemplazarPestana(MainView.TAB_RECURSOS, recursoView);
+        }
+        // Calendarizacion, Actividades y Estadisticas: existen para los dos roles
+        if (vista.tienePestana(MainView.TAB_CALENDARIZACION)) {
+            CalendarizacionView calendarizacionView = new CalendarizacionView();
+            new CalendarizacionController(calendarizacionView);
+            vista.reemplazarPestana(MainView.TAB_CALENDARIZACION, calendarizacionView);
+        }
+        if (vista.tienePestana(MainView.TAB_ACTIVIDADES)) {
+            ActividadesView actividadesView = new ActividadesView();
+            new ActividadesController(actividadesView);
+            vista.reemplazarPestana(MainView.TAB_ACTIVIDADES, actividadesView);
+        }
+        if (vista.tienePestana(MainView.TAB_ESTADISTICAS)) {
+            EstadisticasView estadisticasView = new EstadisticasView();
+            new EstadisticasController(estadisticasView);
+            vista.reemplazarPestana(MainView.TAB_ESTADISTICAS, estadisticasView);
+        }
 
     }
 

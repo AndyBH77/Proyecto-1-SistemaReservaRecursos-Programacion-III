@@ -2,8 +2,11 @@ package cr.ac.una.eif206.frontend.proxy;
 
 import cr.ac.una.eif206.common.modelo.CategoriaRecurso;
 import cr.ac.una.eif206.common.modelo.DatosReservaExtraidos;
+import cr.ac.una.eif206.common.modelo.EstadisticaItem;
+import cr.ac.una.eif206.common.modelo.Recurso;
 import cr.ac.una.eif206.common.modelo.Reserva;
 import cr.ac.una.eif206.common.modelo.ResultadoReserva;
+import cr.ac.una.eif206.common.modelo.TablaConsulta;
 import cr.ac.una.eif206.common.modelo.Usuario;
 import cr.ac.una.eif206.common.protocolo.Comando;
 import cr.ac.una.eif206.common.protocolo.Request;
@@ -241,11 +244,65 @@ public final class ServiceProxy {
 
     // ==================================================================
     // JORDI: recursos, calendarizacion, actividades y estadisticas
-    // Ejemplo:
-    //   public List<Recurso> listarRecursosPorCategoria(int idCategoria) throws Exception {
-    //       return ejecutar(new Request(Comando.LISTAR_RECURSOS_POR_CATEGORIA)
-    //               .agregar("idCategoria", idCategoria));
-    //   }
+    // (los nombres de los parametros deben ser IGUALES a los del case en
+    //  backend/red/ComandosRecursosConsultas)
     // ==================================================================
+
+    // ---------------- Recursos ----------------
+
+    public List<Recurso> listarRecursos() throws Exception {
+        return ejecutar(new Request(Comando.LISTAR_RECURSOS));
+    }
+
+    public List<Recurso> listarRecursosPorCategoria(int idCategoria) throws Exception {
+        return ejecutar(new Request(Comando.LISTAR_RECURSOS_POR_CATEGORIA)
+                .agregar("idCategoria", idCategoria));
+    }
+
+    public void agregarRecurso(String id, int idCategoria, String descripcion) throws Exception {
+        ejecutar(new Request(Comando.AGREGAR_RECURSO)
+                .agregar("id", id)
+                .agregar("idCategoria", idCategoria)
+                .agregar("descripcion", descripcion));
+    }
+
+    public void modificarRecurso(String id, int idCategoria, String descripcion) throws Exception {
+        ejecutar(new Request(Comando.MODIFICAR_RECURSO)
+                .agregar("id", id)
+                .agregar("idCategoria", idCategoria)
+                .agregar("descripcion", descripcion));
+    }
+
+    public void eliminarRecurso(String id) throws Exception {
+        ejecutar(new Request(Comando.ELIMINAR_RECURSO).agregar("id", id));
+    }
+
+    // ---------------- Calendarizacion y Actividades ----------------
+
+    /** Matriz horas x recursos de una categoria, para una fecha. */
+    public TablaConsulta calendarizacion(LocalDate fecha, int idCategoria) throws Exception {
+        return ejecutar(new Request(Comando.CALENDARIZACION)
+                .agregar("fecha", fecha)
+                .agregar("idCategoria", idCategoria));
+    }
+
+    /** Matriz horas x dias de la semana (lunes a domingo) que contiene la fecha. */
+    public TablaConsulta programacionSemanal(LocalDate fecha) throws Exception {
+        return ejecutar(new Request(Comando.PROGRAMACION_SEMANAL).agregar("fecha", fecha));
+    }
+
+    // ---------------- Estadisticas ----------------
+
+    public List<EstadisticaItem> estadisticasRecursos(LocalDate desde, LocalDate hasta) throws Exception {
+        return ejecutar(new Request(Comando.ESTADISTICAS_RECURSOS)
+                .agregar("desde", desde)
+                .agregar("hasta", hasta));
+    }
+
+    public List<EstadisticaItem> estadisticasActividades(LocalDate desde, LocalDate hasta) throws Exception {
+        return ejecutar(new Request(Comando.ESTADISTICAS_ACTIVIDADES)
+                .agregar("desde", desde)
+                .agregar("hasta", hasta));
+    }
 
 }

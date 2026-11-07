@@ -14,3 +14,5 @@ config.properties
 # Archivos generados al usar el programa
 data/
 reportes/
+# ...pero NO el paquete de codigo frontend/reportes (ReportePdfGenerator.java)
+!**/src/main/java/**/reportes/
