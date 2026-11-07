@@ -1,36 +1,16 @@
+# Compilados de Maven / IntelliJ
 target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-
-### IntelliJ IDEA ###
-.idea/
-*.iws
-*.iml
-*.ipr
 out/
+.idea/
+*.iml
 
-### Eclipse ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+# Codigo del Proyecto 1, solo como referencia local.
+# (El original esta en GitHub con la etiqueta proyecto1-final)
+p1-viejo/
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+# Configuracion local con claves reales (NUNCA subir), en cualquier carpeta
+config.properties
 
-### VS Code ###
-.vscode/
-
-### Mac OS ###
-.DS_Store
+# Archivos generados al usar el programa
+data/
+reportes/

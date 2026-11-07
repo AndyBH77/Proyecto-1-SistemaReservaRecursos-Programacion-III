@@ -1,91 +1,115 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!--
+        POM PADRE del Proyecto 2.
+        No tiene codigo propio (packaging = pom): solo agrupa los 3 modulos
+        y define en un solo lugar las versiones de Java y de las librerias.
+    -->
     <groupId>cr.ac.una.eif206</groupId>
-    <artifactId>Proyecto-1-SistemaReservaRecursos-Programacion-III</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <artifactId>sistema-reservas</artifactId>
+    <version>2.0</version>
+    <packaging>pom</packaging>
+    <name>Sistema de Reserva de Recursos - Proyecto 2</name>
+
+    <!-- Los 3 modulos -->
+    <modules>
+        <module>common</module>
+        <module>backend</module>
+        <module>frontend</module>
+    </modules>
 
     <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <junit.jupiter.version>5.10.2</junit.jupiter.version>
-        <surefire.version>3.2.5</surefire.version>
-        <failsafe.version>3.2.5</failsafe.version>
+        <!-- Versiones de librerias (se cambian solo aqui) -->
+        <junit.version>5.10.2</junit.version>
+        <mysql.version>26.10.0</mysql.version>
+        <jakarta.mail.version>2.0.1</jakarta.mail.version>
+        <json.version>20240303</json.version>
+        <openpdf.version>1.3.39</openpdf.version>
+        <plugin.compiler.version>3.13.0</plugin.compiler.version>
+        <plugin.surefire.version>3.2.5</plugin.surefire.version>
     </properties>
 
+    <!--
+        dependencyManagement: aqui se fija la VERSION de cada libreria.
+        Los modulos que la necesiten la declaran sin escribir la version.
+    -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- El modulo common, para que backend y frontend lo usen -->
+            <dependency>
+                <groupId>cr.ac.una.eif206</groupId>
+                <artifactId>common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- Driver JDBC de MySQL (solo backend) -->
+            <dependency>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
+
+            <!-- Envio de correos (backend) -->
+            <dependency>
+                <groupId>com.sun.mail</groupId>
+                <artifactId>jakarta.mail</artifactId>
+                <version>${jakarta.mail.version}</version>
+            </dependency>
+
+            <!-- JSON para la respuesta de Gemini (backend) -->
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>${json.version}</version>
+            </dependency>
+
+            <!-- Reportes PDF (frontend) -->
+            <dependency>
+                <groupId>com.github.librepdf</groupId>
+                <artifactId>openpdf</artifactId>
+                <version>${openpdf.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- JUnit lo heredan los 3 modulos automaticamente -->
     <dependencies>
-        <!-- JUnit Jupiter API + Engine -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>${junit.jupiter.version}</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
-        </dependency>
-
-        <!-- JAXB: permite convertir objetos Java a XML y viceversa -->
-        <dependency>
-            <groupId>jakarta.xml.bind</groupId>
-            <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>4.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-runtime</artifactId>
-            <version>4.0.5</version>
-        </dependency>
-
-        <!-- Jakarta Mail: para enviar correos reales por Gmail (SMTP) -->
-        <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>jakarta.mail</artifactId>
-            <version>2.0.1</version>
-        </dependency>
-
-        <!-- OpenPDF: para generar los reportes en PDF -->
-        <dependency>
-            <groupId>com.github.librepdf</groupId>
-            <artifactId>openpdf</artifactId>
-            <version>1.3.39</version>
-        </dependency>
-
-        <!-- org.json: para leer/escribir JSON al hablar con la API de la IA -->
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20240303</version>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Compilador -->
+            <!-- Compilador de Java 21 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
-                <configuration>
-                    <release>21</release>
-                </configuration>
+                <version>${plugin.compiler.version}</version>
             </plugin>
 
-            <!-- Surefire: ejecuta tests de UNIDAD (patron por defecto: *Test.java) -->
+            <!-- Pruebas de UNIDAD: clases que terminan en Test (mvn test) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire.version}</version>
+                <version>${plugin.surefire.version}</version>
             </plugin>
 
-            <!-- Failsafe: ejecuta tests de INTEGRACION (patron por defecto: *IT.java) -->
+            <!-- Pruebas de INTEGRACION: clases que terminan en IT (mvn verify) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${failsafe.version}</version>
+                <version>${plugin.surefire.version}</version>
                 <executions>
                     <execution>
                         <goals>
