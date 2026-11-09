@@ -14,7 +14,7 @@ import java.util.Optional;
 /**
  * Acceso a la tabla "categoria" de MySQL.
  *
- * Este DAO es el EJEMPLO a seguir para los demas DAO:
+ * Patron que siguen todos los DAO:
  *  1. Escribir el SQL con ? en lugar de los datos.
  *  2. Abrir conexion y PreparedStatement dentro de un try (...) para que se cierren solos.
  *  3. Llenar los ? con setString / setInt (numerados desde 1).
@@ -31,8 +31,27 @@ public class CategoriaRecursoDAO {
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
-            while (rs.next()) {          // avanza fila por fila
+            while (rs.next()) {
                 lista.add(mapear(rs));
+            }
+        }
+        return lista;
+    }
+
+    /** Categorias cuya descripcion contiene el texto (sin importar mayusculas). */
+    public List<CategoriaRecurso> buscarPorDescripcion(String texto) throws SQLException {
+        String sql = "SELECT id, descripcion FROM categoria WHERE descripcion LIKE ? ORDER BY descripcion";
+        List<CategoriaRecurso> lista = new ArrayList<>();
+
+        try (Connection con = ConexionBD.obtenerConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, "%" + texto + "%");   // % = "cualquier texto antes/despues"
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapear(rs));
+                }
             }
         }
         return lista;
@@ -45,7 +64,7 @@ public class CategoriaRecursoDAO {
         try (Connection con = ConexionBD.obtenerConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setInt(1, id);            // llena el primer ?
+            ps.setInt(1, id);
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -59,9 +78,7 @@ public class CategoriaRecursoDAO {
     /**
      * Inserta una categoria nueva. MySQL genera el id (AUTO_INCREMENT)
      * y aqui se recupera con getGeneratedKeys() para devolverlo en el objeto.
-     *
-     * Si la descripcion ya existe, MySQL lanza un error por el UNIQUE
-     * (SQLIntegrityConstraintViolationException); el servicio debe avisarlo.
+     * Si la descripcion ya existe, MySQL lanza SQLIntegrityConstraintViolationException (UNIQUE).
      */
     public CategoriaRecurso insertar(CategoriaRecurso categoria) throws SQLException {
         String sql = "INSERT INTO categoria (descripcion) VALUES (?)";
@@ -70,7 +87,7 @@ public class CategoriaRecursoDAO {
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, categoria.getDescripcion());
-            ps.executeUpdate();          // INSERT, UPDATE y DELETE usan executeUpdate
+            ps.executeUpdate();
 
             try (ResultSet llaves = ps.getGeneratedKeys()) {
                 if (llaves.next()) {
@@ -81,11 +98,34 @@ public class CategoriaRecursoDAO {
         return categoria;
     }
 
-    // ------------------------------------------------------------------
-    // BENJA: agregar aqui buscarPorDescripcion(String texto),
-    //        actualizar(CategoriaRecurso c) y eliminar(int id),
-    //        siguiendo el mismo patron.
-    // ------------------------------------------------------------------
+    /** Cambia la descripcion. Devuelve cuantas filas cambio (0 = no existia). */
+    public int actualizar(CategoriaRecurso categoria) throws SQLException {
+        String sql = "UPDATE categoria SET descripcion = ? WHERE id = ?";
+
+        try (Connection con = ConexionBD.obtenerConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, categoria.getDescripcion());
+            ps.setInt(2, categoria.getId());
+            return ps.executeUpdate();
+        }
+    }
+
+    /**
+     * Borra la categoria. Devuelve cuantas filas borro (0 = no existia).
+     * Si tiene recursos, MySQL lo impide (ON DELETE RESTRICT) y lanza
+     * SQLIntegrityConstraintViolationException.
+     */
+    public int eliminar(int id) throws SQLException {
+        String sql = "DELETE FROM categoria WHERE id = ?";
+
+        try (Connection con = ConexionBD.obtenerConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            return ps.executeUpdate();
+        }
+    }
 
     /** Convierte la fila actual del ResultSet en un objeto CategoriaRecurso. */
     private CategoriaRecurso mapear(ResultSet rs) throws SQLException {

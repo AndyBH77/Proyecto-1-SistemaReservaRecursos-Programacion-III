@@ -3,6 +3,7 @@ package cr.ac.una.eif206.frontend.proxy;
 import cr.ac.una.eif206.common.modelo.CategoriaRecurso;
 import cr.ac.una.eif206.common.modelo.DatosReservaExtraidos;
 import cr.ac.una.eif206.common.modelo.EstadisticaItem;
+import cr.ac.una.eif206.common.modelo.Funcionario;
 import cr.ac.una.eif206.common.modelo.Recurso;
 import cr.ac.una.eif206.common.modelo.Reserva;
 import cr.ac.una.eif206.common.modelo.ResultadoReserva;
@@ -234,12 +235,66 @@ public final class ServiceProxy {
     }
 
     // ==================================================================
-    // BENJA: funcionarios y categorias
-    // Ejemplo:
-    //   public List<Funcionario> listarFuncionarios() throws Exception {
-    //       return ejecutar(new Request(Comando.LISTAR_FUNCIONARIOS));
-    //   }
+    // BENJA: funcionarios y categorias (solo ADMINISTRADOR)
+    // (los nombres de los parametros deben ser IGUALES a los del case en
+    //  backend/red/ComandosFuncionariosCategorias)
     // ==================================================================
+
+    // ---------------- Funcionarios ----------------
+
+    public List<Funcionario> listarFuncionarios() throws Exception {
+        return ejecutar(new Request(Comando.LISTAR_FUNCIONARIOS));
+    }
+
+    /** Busca por id o nombre (texto vacio = todos). */
+    public List<Funcionario> buscarFuncionarios(String texto) throws Exception {
+        return ejecutar(new Request(Comando.BUSCAR_FUNCIONARIOS).agregar("texto", texto));
+    }
+
+    /**
+     * Registra un funcionario: el backend genera la clave y se la envia por correo.
+     * @return el correo al que se envio la clave
+     */
+    public String registrarFuncionario(String id, String nombre, String telefono, String email) throws Exception {
+        return ejecutar(new Request(Comando.REGISTRAR_FUNCIONARIO)
+                .agregar("id", id)
+                .agregar("nombre", nombre)
+                .agregar("telefono", telefono)
+                .agregar("email", email));
+    }
+
+    public void modificarFuncionario(String id, String nombre, String telefono, String email) throws Exception {
+        ejecutar(new Request(Comando.MODIFICAR_FUNCIONARIO)
+                .agregar("id", id)
+                .agregar("nombre", nombre)
+                .agregar("telefono", telefono)
+                .agregar("email", email));
+    }
+
+    public void eliminarFuncionario(String id) throws Exception {
+        ejecutar(new Request(Comando.ELIMINAR_FUNCIONARIO).agregar("id", id));
+    }
+
+    // ---------------- Categorias ----------------
+
+    /** Busca por descripcion (texto vacio = todas). */
+    public List<CategoriaRecurso> buscarCategorias(String texto) throws Exception {
+        return ejecutar(new Request(Comando.BUSCAR_CATEGORIAS).agregar("texto", texto));
+    }
+
+    public void agregarCategoria(String descripcion) throws Exception {
+        ejecutar(new Request(Comando.AGREGAR_CATEGORIA).agregar("descripcion", descripcion));
+    }
+
+    public void modificarCategoria(int id, String descripcion) throws Exception {
+        ejecutar(new Request(Comando.MODIFICAR_CATEGORIA)
+                .agregar("id", id)
+                .agregar("descripcion", descripcion));
+    }
+
+    public void eliminarCategoria(int id) throws Exception {
+        ejecutar(new Request(Comando.ELIMINAR_CATEGORIA).agregar("id", id));
+    }
 
 
     // ==================================================================

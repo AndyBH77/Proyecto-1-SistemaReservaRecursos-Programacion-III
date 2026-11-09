@@ -5,16 +5,16 @@ import cr.ac.una.eif206.frontend.proxy.ServiceProxy;
 import cr.ac.una.eif206.frontend.vista.ActividadesView;
 import cr.ac.una.eif206.frontend.vista.CalendarizacionView;
 import cr.ac.una.eif206.frontend.vista.CambiarClaveView;
+import cr.ac.una.eif206.frontend.vista.CategoriaRecursoView;
 import cr.ac.una.eif206.frontend.vista.EstadisticasView;
+import cr.ac.una.eif206.frontend.vista.FuncionarioView;
 import cr.ac.una.eif206.frontend.vista.LoginView;
 import cr.ac.una.eif206.frontend.vista.MainView;
 import cr.ac.una.eif206.frontend.vista.RecursoView;
 import cr.ac.una.eif206.frontend.vista.ReservaView;
+import cr.ac.una.eif206.frontend.vista.alertas.AlertasPanel;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -55,7 +55,17 @@ public class MainController {
             vista.reemplazarPestana(MainView.TAB_RESERVAS, reservaView);
         }
 
-        // ---------- BENJA: Funcionarios, Categorias ----------
+        // ---------- Funcionarios y Categorias (solo ADMINISTRADOR) ----------
+        if (vista.tienePestana(MainView.TAB_FUNCIONARIOS)) {
+            FuncionarioView funcionarioView = new FuncionarioView();
+            new FuncionarioController(funcionarioView);
+            vista.reemplazarPestana(MainView.TAB_FUNCIONARIOS, funcionarioView);
+        }
+        if (vista.tienePestana(MainView.TAB_CATEGORIAS)) {
+            CategoriaRecursoView categoriaView = new CategoriaRecursoView();
+            new CategoriaRecursoController(categoriaView);
+            vista.reemplazarPestana(MainView.TAB_CATEGORIAS, categoriaView);
+        }
 
         // ---------- JORDI: Recursos, Calendarizacion, Actividades, Estadisticas ----------
         // Recursos: solo existe para ADMINISTRADOR
@@ -84,21 +94,15 @@ public class MainController {
     }
 
     /**
-     * Abre el canal de alertas (segunda conexion) y muestra cada alerta que llega.
-     *
-     * Por ahora es una LISTA SENCILLA TEMPORAL (solo el titulo), para probar
-     * que las alertas llegan.
-     *
-     * BENJA: reemplaza las 3 lineas de abajo por algo asi:
-     *     AlertasPanel panel = new AlertasPanel();
-     *     AlertasController alertas = new AlertasController(panel);   // implementa AlertaListener
-     *     vista.ponerEnAreaAlertas(panel);
-     *     proxy.iniciarAlertas(usuario.getId(), alertas);
+     * Abre el canal de alertas (segunda conexion) y muestra las alertas en el
+     * area de la derecha (AlertasPanel): Actividad | Ver | Desc.
+     * Cada alerta que llega la recibe AlertasController (implementa AlertaListener).
      */
     private void iniciarAlertas() {
-        DefaultListModel<String> alertasTemporales = new DefaultListModel<>();
-        vista.ponerEnAreaAlertas(new JScrollPane(new JList<>(alertasTemporales)));
-        proxy.iniciarAlertas(usuario.getId(), notificacion -> alertasTemporales.addElement(notificacion.getTitulo()));
+        AlertasPanel panelAlertas = new AlertasPanel();
+        AlertasController alertasController = new AlertasController(panelAlertas);
+        vista.ponerEnAreaAlertas(panelAlertas);
+        proxy.iniciarAlertas(usuario.getId(), alertasController);
     }
 
     private void registrarEventos() {
